@@ -32,11 +32,11 @@ eng = create_engine(DSN)
 # ---- Parcel base (assessed values + tax code) ----
 print('reading parcels...', flush=True)
 av = pd.read_sql(text(
-    "SELECT pin, class, township_name, board_land, board_bldg, board_tot, "
+    "SELECT pin, class, board_land, board_bldg, board_tot, "
     "certified_land, certified_bldg, certified_tot, mailed_land, mailed_bldg, mailed_tot "
     f"FROM assessor_assessed_values2 WHERE year={TAX_YEAR}"), eng)
 pu = pd.read_sql(text(
-    f"SELECT pin14 AS pin, tax_code FROM assessor_parcel_universe WHERE year={TAX_YEAR}"), eng)
+    f"SELECT pin14 AS pin, tax_code, township_name FROM assessor_parcel_universe WHERE year={TAX_YEAR}"), eng)
 df = av.merge(pu, on='pin', how='left')
 df['tax_code'] = pd.to_numeric(df['tax_code'], errors='coerce')
 

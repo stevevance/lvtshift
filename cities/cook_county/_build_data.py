@@ -34,7 +34,7 @@ eng = create_engine(DSN)
 # ---- Assessed values (all townships) ----
 print('reading assessed values (county-wide)...', flush=True)
 av = pd.read_sql(text(
-    "SELECT pin, class, township_name, "
+    "SELECT pin, class, "
     "board_land, board_bldg, board_tot, certified_land, certified_bldg, certified_tot, "
     "mailed_land, mailed_bldg, mailed_tot "
     f"FROM assessor_assessed_values2 WHERE year={TAX_YEAR}"), eng)
@@ -43,7 +43,7 @@ print(f'  assessed: {len(av):,}', flush=True)
 # ---- Tax code per parcel ----
 print('reading tax codes...', flush=True)
 pu = pd.read_sql(text(
-    f"SELECT pin14 AS pin, tax_code FROM assessor_parcel_universe WHERE year={TAX_YEAR}"), eng)
+    f"SELECT pin14 AS pin, tax_code, township_name FROM assessor_parcel_universe WHERE year={TAX_YEAR}"), eng)
 print(f'  tax codes: {len(pu):,}', flush=True)
 
 # ---- Composite rate per tax code (Cook County Clerk 2024 Tax Code Agency Rate file) ----

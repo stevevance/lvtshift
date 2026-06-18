@@ -90,6 +90,7 @@ the Illinois classification cap) and a <b>100% building abatement</b> (pure land
     <button data-r='split' class='active'>2.5:1 split-rate</button><button data-r='abate'>100% abatement</button></div>
 </div>
 <div class='cards' id='cards'></div>
+<div id='extremes' style="font-size:13px;color:#45446a;margin:2px 0 12px"></div>
 <table><thead><tr><th>Category</th><th>Median % change</th><th class='num'>Median %</th><th class='num'>Net change ($)</th><th class='num'>Parcels</th></tr></thead><tbody id='rows'></tbody></table>
 <footer>Built with <a href='__CLE__'>LVTShift</a>, a product of the Center for Land Economics
 (<a href='__CLE__'>landeconomics.org/lvtshift</a>). Composite rates: Cook County Clerk
@@ -106,6 +107,7 @@ let reform='split'; const sel=document.getElementById('area');
 DATA.areas.forEach(a=>{const o=document.createElement('option');o.value=a;o.textContent=a+' ('+DATA.byArea[a].n.toLocaleString()+')';sel.appendChild(o);});
 function money(x){const s=x<0?'-':'';return s+'$'+Math.abs(x).toLocaleString();}
 function pct(x){return x===null?'—':(x>=0?'+':'')+x.toFixed(1)+'%';}
+function pick(t){sel.value=t;render();}
 function render(){
   const a=DATA.byArea[sel.value], pk=reform==='split'?'split':'abate', nk='net_'+pk;
   const medAll=reform==='split'?a.med_split:a.med_abate, netAll=reform==='split'?a.net_split:a.net_abate;
@@ -113,6 +115,11 @@ function render(){
     "<div class='sc'><h4>Overall median change</h4><div class='big "+(medAll>=0?'up':'down')+"'>"+pct(medAll)+"</div><div class='sub'>"+(reform==='split'?'2.5:1 split-rate':'100% abatement')+"</div></div>"+
     "<div class='sc'><h4>Aggregate net change</h4><div class='big'>"+money(netAll)+"</div><div class='sub'>sum across "+a.n.toLocaleString()+" parcels</div></div>"+
     "<div class='sc'><h4>Modeled parcels</h4><div class='big'>"+a.n.toLocaleString()+"</div><div class='sub'>non-exempt, "+sel.value+"</div></div>";
+  const towns=DATA.areas.filter(t=>t!=='All Cook County'&&t!=='(Unknown)');
+  let hi=towns[0], lo=towns[0];
+  towns.forEach(t=>{const v=DATA.byArea[t][nk]; if(v>DATA.byArea[hi][nk])hi=t; if(v<DATA.byArea[lo][nk])lo=t;});
+  document.getElementById('extremes').innerHTML=
+    "Across townships under this reform — <b>highest net change:</b> <a href='#' onclick=\"pick('"+hi+"');return false\" style='color:#5C6FE3'>"+hi+"</a> ("+money(DATA.byArea[hi][nk])+") &nbsp;·&nbsp; <b>lowest net change:</b> <a href='#' onclick=\"pick('"+lo+"');return false\" style='color:#5C6FE3'>"+lo+"</a> ("+money(DATA.byArea[lo][nk])+")";
   const rows=a.cats.slice().sort((x,y)=>((y[pk]??-999)-(x[pk]??-999)));
   const scale=Math.max(1,...rows.map(r=>Math.abs(r[pk]??0)));
   document.getElementById('rows').innerHTML=rows.map(r=>{
