@@ -24,6 +24,7 @@ sys.path.insert(0, '../chicago')     # shared Cook-County params (single source 
 from lvt.lvt_utils import (calculate_current_tax, model_split_rate_tax,
                            model_full_building_abatement)
 from chicago_params import EQUALIZER, LAND_IMPROVEMENT_RATIO as RATIO, class_to_loa, classify
+from cook_rates import read_rate_xlsx
 
 TAX_YEAR = 2024
 DATA_DIR = Path('data'); DATA_DIR.mkdir(exist_ok=True)
@@ -46,7 +47,9 @@ pu = pd.read_sql(text(
 print(f'  tax codes: {len(pu):,}', flush=True)
 
 # ---- Composite rate per tax code (Cook County Clerk 2024 Tax Code Agency Rate file) ----
-rates = pd.read_csv('data/tax_code_rates.csv')
+_ar = read_rate_xlsx()
+rates = (_ar.drop_duplicates('Code24')[['Code24', 'CodeRate24']]
+         .rename(columns={'Code24': 'tax_code', 'CodeRate24': 'composite_rate_pct'}))
 rates['tax_code'] = rates['tax_code'].astype(str).str.strip()
 
 df = av.merge(pu, on='pin', how='left')

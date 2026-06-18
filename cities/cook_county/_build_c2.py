@@ -23,9 +23,9 @@ from sqlalchemy import create_engine, text
 
 sys.path.insert(0, '../..'); sys.path.insert(0, '../chicago')
 from chicago_params import EQUALIZER, LAND_IMPROVEMENT_RATIO as RATIO, class_to_loa, classify
+from cook_rates import read_rate_xlsx
 
 TAX_YEAR = 2024
-RATE_XLSX = os.environ.get("LVT_COOK_RATE_XLSX", "data/2024-tax-code-agency-rate-file.xlsx")
 DSN = os.environ["LVT_COOK_DSN"]   # Cook County assessor Postgres DSN (set in env; not committed)
 eng = create_engine(DSN)
 
@@ -60,7 +60,7 @@ df.loc[(df['assessed_bldg'] <= 0) & (df['PROPERTY_CATEGORY'] != 'Transportation 
 df['eav'] = df['assessed_tot'] * EQUALIZER
 
 # ---- Agency rates (real taxing bodies; drop TIF placeholders) ----
-ar = pd.read_excel(RATE_XLSX)
+ar = read_rate_xlsx()
 ar['AuthorityName'] = ar['AuthorityName'].astype(str)
 ar = ar[~ar['AuthorityName'].str.upper().str.startswith('TIF')].drop_duplicates(['Code24','Agency'])
 ar = ar[['Code24','Agency','AuthRate24']].rename(columns={'Code24':'tax_code'})

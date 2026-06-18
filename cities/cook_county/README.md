@@ -16,16 +16,16 @@ Each scenario produces both a **2.5:1 split-rate** and a **100% building abateme
 ## Data
 - **Parcels & assessed values:** Cook County Assessor — Assessed Values (`uzyt-m557`) and Parcel
   Universe (`nj4t-kc8j`). Seeded locally from a Postgres mirror for speed.
-- **Composite & per-agency rates:** Cook County Clerk **Tax Extension and Rates**
-  (`2024 Tax Code Agency Rate` file). TIF placeholder rows (rate = 1.0) are excluded; the remaining
-  ~900 agencies' rates reconcile exactly to each tax code's composite.
+- **Composite & per-agency rates:** Cook County Clerk **Tax Extension and Rates** — the
+  [2024 Tax Code Agency Rate file](https://www.cookcountyclerkil.gov/sites/default/files/2026-04/2024-tax-code-agency-rate-file.xlsx),
+  fetched automatically by `cook_rates.py`. TIF placeholder rows (rate = 1.0) are excluded; the
+  remaining ~900 agencies' rates reconcile exactly to each tax code's composite.
 
 ## Running
-Set the DB DSN (and optionally the rate-file path) in the environment, place the Clerk rate file in
-`data/`, then run the build → report for each scenario:
+Set the DB DSN, then run the build → report for each scenario. The Clerk rate file is fetched
+automatically from its public URL (override with `LVT_COOK_RATE_XLSX` — a URL or local path — if needed):
 ```bash
 export LVT_COOK_DSN='postgresql+psycopg2://USER@HOST:PORT/DB?sslmode=require'   # password via ~/.pgpass
-export LVT_COOK_RATE_XLSX='data/2024-tax-code-agency-rate-file.xlsx'
 python3 _build_c2.py && python3 _report_c2.py        # C2-MV
 python3 _build_c2_cp.py && python3 _report_c2cp.py   # C2-CP
 python3 _build_data.py && python3 _report_byarea.py  # C1
