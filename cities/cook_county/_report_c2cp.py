@@ -69,14 +69,17 @@ html = """<!doctype html><html lang='en'><head><meta charset='utf-8'>
 <p style="margin:22px 0 0"><a href="index.html" style="color:#5C6FE3;font-size:13px;text-decoration:none">&larr; All LVT reports</a></p>
 <p style="font-size:12.5px;color:#8C8B87;margin:6px 0 4px">Cook County variants: <a href="cook-c1.html" style="color:#5C6FE3;text-decoration:none">C1 · single county-wide rate</a> &nbsp;·&nbsp; <a href="cook-c2-mv.html" style="color:#5C6FE3;text-decoration:none">C2-MV · per-district (market value)</a> &nbsp;·&nbsp; <b>C2-CP · per-district (classification-preserved)</b></p>
 <header><h1>Cook County: a per-taxing-district land value tax — classification-preserved (C2-CP)</h1>
-<p class='lede'>Modeled impact of each of Cook County's ~900 taxing bodies (school, library, park, municipal,
-county districts) shifting <b>its own</b> levy to land <b>within its own boundary</b> — revenue-neutral
-<b>per district</b>. The reform is applied <b>per taxing body</b>; the results below are merely
-<b>summarized by assessment township</b> (34 of them) for navigation — the township is not the tax unit. Unlike the single county-wide rate (C1), this <b>preserves every district's revenue</b>
-and the link between a parcel and the districts that tax it, so it isolates the pure land shift rather than
-also pooling tax base across the county. A parcel's new bill = the sum, over the districts covering it, of
-its land value × each district's land rate. Two reforms: a <b>2.5:1 split-rate</b> (land taxed 2.5× buildings,
-the Illinois classification cap) and a <b>100% building abatement</b> (pure land tax). This variant runs on <b>assessed</b> values (Cook County's 10%/25% class ratios kept), so it isolates the pure land shift from the classification-removal effect baked into the market-value version. Positive = pays more.</p></header>
+<p class='lede'>Each of Cook County's ~900 taxing bodies — school, library, park, municipal, and county
+districts — shifts its own levy from total value onto land, within its own boundary and keeping its own
+revenue. A parcel's new bill is the sum, across the districts that cover it, of its land value times each
+district's land rate.</p>
+<p class='lede'>Because each district funds itself, this isolates the pure land shift. (The single
+county-wide rate, C1, instead pools the whole county's tax base together.) Results are grouped by
+assessment township just for navigation — the township is not the tax unit.</p>
+<p class='lede'>Two reforms are shown: a 2.5:1 split-rate (land taxed 2.5× buildings, the Illinois
+classification cap) and a 100% building abatement (a pure land tax). This variant uses assessed values, so
+Cook County's 10%/25% class ratios stay in place — separating the land shift from the
+classification-removal effect. Positive means the parcel pays more.</p></header>
 <div style="background:#fff;border:1px solid __GRID__;border-left:4px solid __BLUE__;border-radius:8px;padding:14px 18px;margin:16px 0;font-size:13.5px;color:#45446a;line-height:1.55">
 <b>How to read this.</b> A land shift taxes land at a higher rate than buildings, set so total revenue is unchanged. Because the total is unchanged, it's a <b>redistribution: whoever is land-heavy pays more, whoever is building-heavy pays less.</b>
 <ul style="margin:8px 0 0;padding-left:20px">
