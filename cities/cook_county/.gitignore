@@ -1,0 +1,4 @@
+# Build artifacts (regenerated from the scripts) — not committed
+*.html
+# data/ (parcel caches, tax-code rate file) is also ignored via the repo-root .gitignore
+data/
