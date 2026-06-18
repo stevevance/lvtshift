@@ -1,0 +1,278 @@
+<!doctype html><html lang='en'><head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1'>
+<title>Chicago LVT — methodology &amp; limitations</title><style>
+ body{background:#F4F3EF;color:#26235C;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
+   margin:0;padding:0 0 80px;line-height:1.55}
+ .wrap{max-width:920px;margin:0 auto;padding:0 26px}
+ a{color:#5C6FE3}
+ header{padding:48px 0 8px}
+ h1{font-size:30px;text-transform:uppercase;letter-spacing:.3px;margin:0 0 10px}
+ h2{font-size:20px;margin:34px 0 8px;border-top:2px solid #26235C;padding-top:16px}
+ h3{font-size:15px;margin:22px 0 6px}
+ .lede{font-size:15px;color:#45446a;max-width:760px}
+ .cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0}
+ .card{display:block;background:#fff;border:1px solid #DEDDD7;border-radius:10px;padding:18px 20px;
+   text-decoration:none;color:#26235C;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+ .card:hover{border-color:#5C6FE3;box-shadow:0 2px 10px rgba(92,111,227,.18)}
+ .card .t{font-size:16px;font-weight:bold;margin-bottom:4px}
+ .card .d{font-size:13px;color:#8C8B87}
+ ul{font-size:14.5px;color:#45446a;max-width:760px} li{margin:5px 0}
+ table{border-collapse:collapse;width:100%;font-size:13.5px;margin:10px 0}
+ th,td{padding:7px 10px;border-bottom:1px solid #DEDDD7;text-align:left} th{color:#8C8B87;font-size:12px}
+ code{background:#eceadf;padding:1px 5px;border-radius:4px;font-size:90%}
+ blockquote{border-left:3px solid #5C6FE3;margin:12px 0;padding:4px 16px;color:#45446a}
+ .note{background:#fff;border:1px solid #DEDDD7;border-left:4px solid #5C6FE3;border-radius:8px;
+   padding:14px 18px;font-size:13.5px;color:#45446a;margin:18px 0}
+ footer{color:#8C8B87;font-size:12px;border-top:1px solid #DEDDD7;margin-top:46px;padding-top:16px}
+</style></head>
+<body><div class='wrap'>
+<p style='margin:24px 0 0'><a href='index.html'>&larr; Back to the Chicago LVT reports</a></p>
+<h1>Chicago, IL — LVT Model Methodology &amp; Limitations</h1>
+<p><strong>Model:</strong> 2.5:1 split-rate, revenue-neutral (canonical). Also computed: 100% building abatement (pure LVT), and a classification-preserved variant.
+<strong>Explainer generated:</strong> 2026-06-17  ·  <strong>Probe depth:</strong> deep (cached parcel data present)
+<strong>One-line read:</strong> The headline result — Chicago <em>housing</em> pays substantially more and <em>commercial</em> pays less — is driven <strong>as much by removing Cook County's classification system as by the land shift itself</strong>, because the reform base is market value. Read every category result through that lens.</p>
+<hr />
+<h2>1. What was modeled</h2>
+<ul>
+<li><strong>Jurisdiction / body:</strong> City of Chicago — the <strong>City Corporate levy only</strong> (the City's own general + pension extension). Not the composite tax bill.</li>
+<li><strong>Reform:</strong> revenue-neutral shift toward land. Canonical export is a <strong>2.5:1 split-rate</strong> (land taxed at 2.5× the improvement rate); the ratio is capped at 2.5:1 to respect the Illinois Constitution's classification limit (Art. IX §4(b)). A <strong>100% building abatement</strong> (pure LVT) and a <strong>classification-preserved</strong> variant are also produced for comparison.</li>
+<li><strong>Revenue-neutrality basis:</strong> the modeled new revenue is solved to equal the modeled current revenue, which is pinned to the official City Corporate levy.</li>
+</ul>
+<h2>2. Data provenance</h2>
+<ul>
+<li><strong>Committed/reproducible source:</strong> Cook County open-data Socrata — <strong>Assessor Assessed Values</strong> (<code>uzyt-m557</code>) for land/building/total assessed values, joined to <strong>Parcel Universe</strong> (<code>nj4t-kc8j</code>) for location. City = the eight Chicago assessment townships (codes 70–77), which are coterminous with the municipal boundary.</li>
+<li><strong>Local cache seeding (this run):</strong> because the public Socrata API was severely rate-limited, the cache (<code>cities/chicago/data/parcels.gpq</code>) was seeded from the Chicago Cityscape Postgres — assessed values from <code>assessor_assessed_values2</code>, and parcel-centroid lat/lon from <code>parcel_2025_unioned</code> (<code>ST_Centroid</code>, SRID 3435→4326), with a fallback to <code>propertytaxes_combined.geom_2025</code>. The data is identical to the public datasets; the committed notebook still references Socrata.</li>
+<li><strong>Tax year:</strong> <strong>2024</strong> (the data) vs. the official levy figure (also <strong>TY2024</strong>, Cook County Clerk 2024 Tax Rate Report) — no tax-year drift.</li>
+<li><strong>Parcel count:</strong> 882,904 total (matches Socrata 2024 for townships 70–77). <strong>830,169 modeled</strong> after holding out <strong>52,735 fully-exempt</strong> parcels.</li>
+<li><strong>Geometry match:</strong> 100.0% of parcels assigned a centroid (67.1% on <code>pin14</code>, → 99.7% via <code>pin10</code> parent for condo units, → 100% via the <code>propertytaxes_combined</code> fallback). Note the geometry vintage is the <strong>2025</strong> parcel file applied to 2024 assessments; ~2,549 taxable PINs (0.3%) that churned between years were dropped earlier in the pure-Socrata build but recovered here.</li>
+<li><strong>Census join:</strong> 100.0% of parcels matched to a 2022 ACS block group (<code>std_geoid</code> non-null = 100%); <strong>median_income non-null = 90.5%</strong> (some block groups lack an income estimate).</li>
+</ul>
+<h2>3. Tax base &amp; millage</h2>
+<ul>
+<li><strong>Assessed → market value.</strong> Cook County publishes <em>assessed</em> values, not market values, and assesses by class: residential/vacant/multi-family (major classes 1/2/3/9) at <strong>10%</strong>, not-for-profit (4) at <strong>20%</strong>, commercial/industrial (5) at <strong>25%</strong>, incentive classes (6/7/8) at a reduced <strong>10%</strong> in their active phase. Each parcel's market value = assessed ÷ its class level of assessment. <strong>The split-rate / abatement are applied to market value</strong>, so a dollar of land is taxed uniformly across classes. <em>(This is the single most consequential modeling choice — see §9.)</em></li>
+<li><strong>Equalized Assessed Value (EAV)</strong> = assessed × the IDOR Cook County <strong>state equalizer 3.0355</strong> (TY2024 final). Current tax is computed on <strong>gross EAV</strong>.</li>
+<li><strong>Current millage / rate.</strong> The City Corporate levy is spread across taxable EAV at a uniform citywide rate. Rather than look up the rate, the model <strong>derives</strong> it from the levy: <code>city_rate = CITY_LEVY / Σ(taxable gross EAV)</code> = <strong>1.1733%</strong>. Published City Corporate rate (Cook County Clerk) = <strong>1.4958%</strong>. The derived rate is lower because gross EAV exceeds the net taxable base by exemptions + TIF (≈ −22% / ratio 0.78) — see §6/§9.</li>
+<li><strong>Modeled reform millages (2.5:1 split-rate):</strong> land <strong>8.358</strong> / improvement <strong>3.343</strong> per $1,000 of market value (ratio exactly 2.5:1). Abatement variant: land <strong>19.28</strong>, improvement 0.</li>
+</ul>
+<h2>4. Revenue</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Amount</th>
+<th>Source</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Modeled current revenue</td>
+<td><strong>$1,642,587,611</strong></td>
+<td>notebook §4 output; recomputed <code>Σ current_tax</code> from export = $1,642,587,611</td>
+</tr>
+<tr>
+<td>Revenue-neutral new revenue</td>
+<td><strong>$1,642,587,611</strong></td>
+<td>notebook §5 output; <code>Σ new_tax</code> from export = $1,642,587,611</td>
+</tr>
+<tr>
+<td>Official figure</td>
+<td><strong>$1,642,587,611</strong></td>
+<td>City of Chicago <strong>Corporate</strong> extension, Cook County Clerk <strong>2024</strong> Tax Rate Report</td>
+</tr>
+<tr>
+<td>Gap</td>
+<td><strong>0.000%</strong></td>
+<td>exact by construction — the levy is the revenue-neutral target</td>
+</tr>
+</tbody>
+</table>
+<p>Because current revenue is <em>set</em> to the official levy, Gate-1 "revenue match" is satisfied by construction; the meaningful check is the <strong>derived rate (1.17%) vs published (1.50%)</strong> — the 0.78 ratio quantifies the gross-EAV gap (§9, limitation 3).</p>
+<h2>5. Levies modeled vs NOT modeled</h2>
+<ul>
+<li><strong>Modeled:</strong> City of Chicago <strong>Corporate</strong> levy only.</li>
+<li><strong>Excluded</strong> (all also appear on a Chicago parcel's actual bill): Chicago <strong>Board of Education / CPS</strong> (~$3.99B, the largest single levy), City of Chicago <strong>Library</strong> and <strong>School Building &amp; Improvement</strong> funds, <strong>Cook County</strong>, <strong>Forest Preserve</strong>, <strong>Metropolitan Water Reclamation District</strong>, <strong>City Colleges (Community College Dist. 508)</strong>, <strong>Chicago Park District</strong>, and any <strong>Special Service Areas / TIF</strong>. A resident's composite TY2024 rate was ~6.62%; the modeled City Corporate piece is ~1.50% of that. The model therefore describes the incidence of <strong>the City's own levy only</strong>, not a household's total bill. <em>(No legality brief present to cross-check the vehicle.)</em></li>
+</ul>
+<h2>6. Exemptions</h2>
+<ul>
+<li><strong>Full exemptions:</strong> a parcel is flagged fully exempt if its class is <strong><code>EX</code> or <code>RR</code></strong> (railroad, state-assessed) <strong>or</strong> it has zero/blank assessed value. <strong>52,735 parcels (6.0%)</strong> were flagged and <strong>held out of the revenue-neutral solver</strong> and excluded from the export and charts (the export's <code>is_fully_exempt</code> sums to 0 because they were removed upstream).</li>
+<li><strong>Partial / dollar relief: NONE modeled.</strong> The public Assessed Values dataset carries no per-parcel <strong>homeowner / senior / senior-freeze</strong> exemptions, so the model runs on <strong>gross EAV</strong>. This is a deliberate, documented choice (the user opted for gross-EAV over an owner-occupancy proxy). Consequence: the derived city rate (1.17%) sits below the published 1.50%, and absolute burdens are not exemption-exact.</li>
+<li><strong>Caps / circuit breakers:</strong> none exist for this levy / none modeled.</li>
+<li><strong>Credits:</strong> none modeled.</li>
+<li><strong>How they stack:</strong> with no partial relief, no caps, and no credits, the per-parcel computation reduces to: <strong>full-exempt zeroing → millage</strong>. <code>calculate_current_tax</code> is called with <code>exemption_flag_col='full_exmp'</code> (no <code>exemption_col</code>), so exempt parcels are zeroed; everyone else is <code>taxable_value × millage / 1000</code>. The split-rate solver receives only the non-exempt set.</li>
+</ul>
+<h2>7. Property categories</h2>
+<ul>
+<li><strong>Source field:</strong> Cook County 3-character <strong>class code</strong> (<code>class</code>), mapped via a function (not a flat table) that splits residential subcodes, condos, townhomes, multifamily, mixed-use, and the commercial/industrial/incentive classes per the CCAO <em>Classifications of Real Property</em> (rev. 12/16/2024).</li>
+<li><strong>Transportation - Parking</strong> category: classes ending in <strong>-22</strong> (5-22/7-22/8-22 automotive) + <strong>7-52</strong>, ending in <strong>-23</strong> (gasoline stations), and ending in <strong>-90</strong> (minor improvements incl. 1-90 and surface lots) — and these are <strong>held out of the $0-improvement→Vacant override</strong> so surface lots aren't reabsorbed into Vacant Land.</li>
+<li><strong>$0-improvement → Vacant Land override:</strong> applied (except Parking). Any parcel with zero building value is recategorized Vacant Land regardless of class.</li>
+<li><strong>2-41</strong> (vacant land under common ownership w/ adjacent residence) → Vacant Land, taxed at the 10% residential level.</li>
+<li><strong>Distribution (modeled, non-exempt = 830,169):</strong></li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Category</th>
+<th>Parcels</th>
+<th></th>
+<th>Category</th>
+<th>Parcels</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Condominium</td>
+<td>287,166</td>
+<td></td>
+<td>Industrial</td>
+<td>11,404</td>
+</tr>
+<tr>
+<td>Single Family Residential</td>
+<td>278,520</td>
+<td></td>
+<td>Large Multi-Family (5+)</td>
+<td>11,258</td>
+</tr>
+<tr>
+<td>Small Multi-Family (2-4)</td>
+<td>120,202</td>
+<td></td>
+<td>Other Commercial</td>
+<td>4,359</td>
+</tr>
+<tr>
+<td>Vacant Land</td>
+<td>39,925</td>
+<td></td>
+<td>Other Residential</td>
+<td>4,309</td>
+</tr>
+<tr>
+<td>Townhome / Rowhouse</td>
+<td>23,020</td>
+<td></td>
+<td>Office / Commercial Condo</td>
+<td>4,245</td>
+</tr>
+<tr>
+<td>Mixed Use</td>
+<td>15,962</td>
+<td></td>
+<td>Hotel</td>
+<td>436</td>
+</tr>
+<tr>
+<td>Transportation - Parking</td>
+<td>15,957</td>
+<td></td>
+<td>Other</td>
+<td>172</td>
+</tr>
+<tr>
+<td>Retail / General Commercial</td>
+<td>13,232</td>
+<td></td>
+<td>Agricultural</td>
+<td>2</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>Residual buckets are small</strong> (each &lt;0.6%): <code>Other Residential</code> (4,309) is <strong>94% Class 2-01 residential garages</strong> (mostly land — explains its near-vacant behavior), <code>Other Commercial</code> (4,359), <code>Other</code> (172). None exceed the ~10% threshold.</li>
+</ul>
+<h2>8. Land/improvement split + deep-probe diagnostics</h2>
+<p>Each parcel's land and improvement market values come <strong>directly</strong> from the assessor's separately-set land and building assessed values (÷ class LOA) — <em>not</em> an allocation of a combined total. The deep probes confirm this produces real variation:</p>
+<p><strong>Land-ratio uniformity</strong> (land ÷ (land+building), parcels with building&gt;0). A category with &gt;50% of parcels at one modal ratio would be a flat-allocation artifact (the Maricopa case). <strong>None are:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Category</th>
+<th>n</th>
+<th>median land ratio</th>
+<th>std</th>
+<th>% at modal (2dp)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Single Family Residential</td>
+<td>278,520</td>
+<td>0.252</td>
+<td>0.123</td>
+<td>3.5%</td>
+</tr>
+<tr>
+<td>Condominium</td>
+<td>287,166</td>
+<td>0.109</td>
+<td>0.133</td>
+<td>7.3%</td>
+</tr>
+<tr>
+<td>Small Multi-Family (2-4)</td>
+<td>120,202</td>
+<td>0.216</td>
+<td>0.127</td>
+<td>4.0%</td>
+</tr>
+<tr>
+<td>Industrial</td>
+<td>11,404</td>
+<td>0.723</td>
+<td>0.302</td>
+<td>9.0%</td>
+</tr>
+<tr>
+<td>Office / Commercial Condo</td>
+<td>4,245</td>
+<td>0.148</td>
+<td>0.164</td>
+<td>13.6%</td>
+</tr>
+<tr>
+<td>Retail / General Commercial</td>
+<td>13,232</td>
+<td>0.380</td>
+<td>0.243</td>
+<td>2.2%</td>
+</tr>
+<tr>
+<td>Transportation - Parking</td>
+<td>15,899</td>
+<td>0.944</td>
+<td>0.243</td>
+<td>12.0%</td>
+</tr>
+<tr>
+<td>Other Residential (garages)</td>
+<td>4,309</td>
+<td>0.919</td>
+<td>0.195</td>
+<td>8.9%</td>
+</tr>
+</tbody>
+</table>
+<p>Land ratios are economically sensible (condos &amp; offices building-heavy; industrial, parking, garages land-heavy) and vary widely — <strong>the split-rate genuinely differentiates parcels.</strong></p>
+<p><strong>Collapsed % change</strong> (share of a category's parcels within 1 percentage-point of the category median, split-rate):</p>
+<ul>
+<li><strong>Vacant Land: 99.8%</strong> — collapsed, but <strong>inherently, not as an artifact</strong>: a zero-building parcel's % change is <code>land_millage / (0.10 × equalizer × city_rate) − 1</code>, in which land value cancels, so every 10%-assessed vacant parcel moves an identical <strong>+134.7%</strong> citywide. This is correct land economics, not a bookkeeping flat-rate.</li>
+<li><strong>Every other category: 1.7%–16.8%</strong> within 1pp of median — i.e., genuine spread. No collapsed signal in the built categories.</li>
+</ul>
+<h2>9. Limitations (ranked)</h2>
+<ol>
+<li><strong>Market-value base bundles two reforms.</strong> Because the split/abatement run on market value, they simultaneously (a) shift tax to land and (b) <strong>undo Cook County's classification system</strong> (residential assessed at 10% vs commercial 25%). The large residential <em>increases</em> (SFR +29%) and commercial <em>cuts</em> (offices −54%, hotels −55%) are driven <strong>mostly by (b)</strong>. The classification-preserved variant isolates (a): there, housing is roughly flat-to-down and land-heavy commercial rises. <strong>Undermines:</strong> any claim that "the land tax raises homeowner bills" — most of that is the assessment-uniformity change, not the land shift.</li>
+<li><strong>City Corporate levy only.</strong> Excludes CPS, County, MWRD, parks, library, community college, TIF, SSAs. <strong>Undermines:</strong> any statement about a household's <em>total</em> tax bill — this is ~1.5 percentage points of a ~6.6% composite.</li>
+<li><strong>Gross EAV — no exemptions applied.</strong> Homeowner/senior exemptions and TIF increment are not subtracted (public data lacks them), so the derived rate (1.17%) is ~22% below the published 1.50% and per-parcel <em>levels</em> are not exemption-exact. <strong>Undermines:</strong> precise dollar burdens, especially for owner-occupied homes that currently hold exemptions. (Revenue-neutral <em>distribution</em> is robust.)</li>
+<li><strong>TY2024 is the City reassessment year.</strong> Board of Review values are still rolling out (~90% Board-certified); the model uses Board → certified → mailed coalesce, so a minority of parcels reflect a pre-final stage. <strong>Undermines:</strong> precision for not-yet-finalized parcels; will settle as certification completes.</li>
+<li><strong>Incentive classes (6/7/8) assumed at 10%.</strong> A minority in years 11–12 (15%/20%) or expired would have market value slightly overstated. Small share. <strong>Undermines:</strong> exact treatment of incentive parcels only.</li>
+<li><strong>Geometry vintage mismatch.</strong> 2025 parcel centroids on 2024 assessments; resolved to 100% via fallback, but a handful of churned PINs use a parent-parcel centroid. <strong>Undermines:</strong> nothing material for block-group-level equity.</li>
+<li><strong>Median_income coverage 90.5%.</strong> Equity-by-income charts exclude ~9.5% of parcels in block groups without an ACS income estimate. <strong>Undermines:</strong> completeness (not direction) of the income-quintile analysis.</li>
+</ol>
+<h2>10. What the model CAN and CANNOT support</h2>
+<ul>
+<li><strong>CAN:</strong> the <em>distributional direction and relative magnitude</em> of shifting the City's own levy toward land — which property types and which neighborhoods pay more vs. less, revenue-neutral; the finding that vacant land and (in high-value areas) land-heavy commercial bear large increases while building-heavy commercial cores (Loop, Near North/West) receive large cuts; the geographic North-vs-South contrast; and — via the classification-preserved variant — separation of the land-shift effect from the classification-removal effect.</li>
+<li><strong>CANNOT:</strong> a household's actual total tax bill (one levy of many); exemption-exact dollar burdens (gross EAV); the effect on a <em>specific</em> parcel without its real exemptions and final Board value; or any claim that the headline housing increase is "the land tax" without crediting the classification-removal effect baked into the market-value base.</li>
+</ul>
+<footer>Generated by the LVTShift <code>/explain-model</code> skill. Background:
+<a href='https://progressandpoverty.substack.com/p/you-can-now-vibe-code-land-value'>progressandpoverty.substack.com</a>.</footer>
+</div></body></html>
