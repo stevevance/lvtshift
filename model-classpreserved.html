@@ -7796,7 +7796,7 @@ a.anchor-link {
 <!-- End of mermaid configuration --></head>
 <body class="jp-Notebook" data-jp-theme-light="true" data-jp-theme-name="JupyterLab Light"><div style="max-width:900px;margin:12px auto;padding:0 20px;font-family:Helvetica,Arial,sans-serif"><a href="index.html" style="color:#5C6FE3;font-size:13px;text-decoration:none">&larr; All Chicago LVT reports</a></div>
 <main>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=f1145bce">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=de741a4e">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -7896,7 +7896,7 @@ stage. Values are final for the majority; this will settle as the reassessment c
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=584524e1">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=326825b7">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -7906,7 +7906,7 @@ stage. Values are final for the majority; this will settle as the reassessment c
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=09835bf8">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=816ebc4c">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -7942,21 +7942,14 @@ stage. Values are final for the majority; this will settle as the reassessment c
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">lvt.census_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_census_data_with_boundaries</span><span class="p">,</span> <span class="n">match_to_census_blockgroups</span>
 
-<span class="c1"># ---- Constants -------------------------------------------------------------</span>
-<span class="n">CITY_NAME</span>   <span class="o">=</span> <span class="s1">'chicago'</span>
-<span class="n">STATE_FIPS</span>  <span class="o">=</span> <span class="s1">'17'</span>      <span class="c1"># Illinois</span>
-<span class="n">COUNTY_FIPS</span> <span class="o">=</span> <span class="s1">'031'</span>     <span class="c1"># Cook County</span>
-<span class="n">MODEL_TYPE</span>  <span class="o">=</span> <span class="s1">'split_rate:2.5'</span>
-<span class="n">LAND_IMPROVEMENT_RATIO</span> <span class="o">=</span> <span class="mf">2.5</span>   <span class="c1"># capped at 2.5:1 per the Illinois classification limit</span>
-<span class="n">TAX_YEAR</span>    <span class="o">=</span> <span class="mi">2024</span>
-
-<span class="c1"># Cook County / City of Chicago parameters (TY2024)</span>
-<span class="n">EQUALIZER</span>          <span class="o">=</span> <span class="mf">3.0355</span>          <span class="c1"># IDOR Cook County final multiplier, TY2024</span>
-<span class="n">CITY_LEVY</span>          <span class="o">=</span> <span class="mi">1_642_587_611</span>   <span class="c1"># City of Chicago Corporate extension (Cook County Clerk 2024 Tax Rate Report)</span>
-<span class="n">PUBLISHED_CITY_RATE</span> <span class="o">=</span> <span class="mf">0.0149578</span>      <span class="c1"># City of Chicago Corporate agency rate (1.495780%)</span>
-
-<span class="c1"># The 8 Cook County assessment townships coterminous with the City of Chicago</span>
-<span class="n">CHICAGO_TOWNSHIPS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'70'</span><span class="p">,</span> <span class="s1">'71'</span><span class="p">,</span> <span class="s1">'72'</span><span class="p">,</span> <span class="s1">'73'</span><span class="p">,</span> <span class="s1">'74'</span><span class="p">,</span> <span class="s1">'75'</span><span class="p">,</span> <span class="s1">'76'</span><span class="p">,</span> <span class="s1">'77'</span><span class="p">]</span>
+<span class="c1"># ---- Parameters: single source of truth, shared with the report pipeline ----</span>
+<span class="c1"># (edit cities/chicago/chicago_params.py to change any of these — the notebook and</span>
+<span class="c1">#  every downstream report import from the same module, so they cannot drift.)</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">'.'</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">chicago_params</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">CITY_NAME</span><span class="p">,</span> <span class="n">STATE_FIPS</span><span class="p">,</span> <span class="n">COUNTY_FIPS</span><span class="p">,</span> <span class="n">MODEL_TYPE</span><span class="p">,</span> <span class="n">LAND_IMPROVEMENT_RATIO</span><span class="p">,</span> <span class="n">TAX_YEAR</span><span class="p">,</span>
+    <span class="n">EQUALIZER</span><span class="p">,</span> <span class="n">CITY_LEVY</span><span class="p">,</span> <span class="n">PUBLISHED_CITY_RATE</span><span class="p">,</span> <span class="n">CHICAGO_TOWNSHIPS</span><span class="p">,</span> <span class="n">class_to_loa</span><span class="p">,</span> <span class="n">classify</span><span class="p">,</span>
+<span class="p">)</span>
 
 <span class="n">DATA_DIR</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">'data'</span><span class="p">)</span>
 <span class="n">DATA_DIR</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -7980,7 +7973,7 @@ stage. Values are final for the majority; this will settle as the reassessment c
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=07084e3a">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=c085c007">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -7993,7 +7986,7 @@ Cached to <code>data/parcels.gpq</code>.</p>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=a5c37fa4">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=68a23d8d">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -8103,7 +8096,7 @@ Cached to <code>data/parcels.gpq</code>.</p>
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=02873295">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=90c70b20">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -8171,7 +8164,7 @@ parcel, is taxed at the 10% residential level.</p>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=30db3476">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=2122c299">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -8190,71 +8183,9 @@ parcel, is taxed at the 10% residential level.</p>
 <span class="n">gdf</span><span class="p">[</span><span class="s1">'assessed_bldg'</span><span class="p">]</span> <span class="o">=</span> <span class="n">coalesce</span><span class="p">(</span><span class="s1">'board_bldg'</span><span class="p">,</span> <span class="s1">'certified_bldg'</span><span class="p">,</span> <span class="s1">'mailed_bldg'</span><span class="p">)</span>
 <span class="n">gdf</span><span class="p">[</span><span class="s1">'assessed_tot'</span><span class="p">]</span>  <span class="o">=</span> <span class="n">coalesce</span><span class="p">(</span><span class="s1">'board_tot'</span><span class="p">,</span>  <span class="s1">'certified_tot'</span><span class="p">,</span>  <span class="s1">'mailed_tot'</span><span class="p">)</span>
 
-<span class="c1"># --- Level of assessment by major class (Cook County, TY2024) ---</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">class_to_loa</span><span class="p">(</span><span class="n">c</span><span class="p">):</span>
-    <span class="n">c</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">c</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
-    <span class="k">if</span> <span class="n">c</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">'EX'</span><span class="p">,</span> <span class="s1">'RR'</span><span class="p">)</span> <span class="ow">or</span> <span class="n">c</span><span class="p">[:</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">'0'</span><span class="p">,</span> <span class="s1">''</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>            <span class="c1"># exempt / railroad — excluded</span>
-    <span class="n">d</span> <span class="o">=</span> <span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="k">if</span> <span class="n">d</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">'1'</span><span class="p">,</span> <span class="s1">'2'</span><span class="p">,</span> <span class="s1">'3'</span><span class="p">,</span> <span class="s1">'9'</span><span class="p">):</span>
-        <span class="k">return</span> <span class="mf">0.10</span>              <span class="c1"># vacant, residential, multi-family, class-3 incentive</span>
-    <span class="k">if</span> <span class="n">d</span> <span class="o">==</span> <span class="s1">'4'</span><span class="p">:</span>
-        <span class="k">return</span> <span class="mf">0.20</span>              <span class="c1"># not-for-profit</span>
-    <span class="k">if</span> <span class="n">d</span> <span class="o">==</span> <span class="s1">'5'</span><span class="p">:</span>
-        <span class="k">return</span> <span class="mf">0.25</span>              <span class="c1"># commercial / industrial</span>
-    <span class="k">if</span> <span class="n">d</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">'6'</span><span class="p">,</span> <span class="s1">'7'</span><span class="p">,</span> <span class="s1">'8'</span><span class="p">):</span>
-        <span class="k">return</span> <span class="mf">0.10</span>              <span class="c1"># incentive, active phase (documented approximation)</span>
-    <span class="k">return</span> <span class="mf">0.10</span>
-
+<span class="c1"># Level of assessment + property category come from chicago_params (imported in §1),</span>
+<span class="c1"># so the notebook and the report pipeline share one definition.</span>
 <span class="n">gdf</span><span class="p">[</span><span class="s1">'loa'</span><span class="p">]</span> <span class="o">=</span> <span class="n">gdf</span><span class="p">[</span><span class="s1">'class'</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">class_to_loa</span><span class="p">)</span>
-
-<span class="c1"># --- Property category (Cook County class -&gt; standard LVTShift category) ---</span>
-<span class="n">_SFR_SUB</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'02'</span><span class="p">,</span><span class="s1">'03'</span><span class="p">,</span><span class="s1">'04'</span><span class="p">,</span><span class="s1">'05'</span><span class="p">,</span><span class="s1">'06'</span><span class="p">,</span><span class="s1">'07'</span><span class="p">,</span><span class="s1">'08'</span><span class="p">,</span><span class="s1">'09'</span><span class="p">,</span><span class="s1">'34'</span><span class="p">,</span><span class="s1">'78'</span><span class="p">}</span>
-
-<span class="k">def</span><span class="w"> </span><span class="nf">classify</span><span class="p">(</span><span class="n">c</span><span class="p">):</span>
-    <span class="n">c</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">c</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
-    <span class="k">if</span> <span class="n">c</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">'EX'</span><span class="p">,</span> <span class="s1">'RR'</span><span class="p">):</span>
-        <span class="k">return</span> <span class="s1">'Exempt'</span>
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s1">'Other'</span>
-    <span class="n">mj</span><span class="p">,</span> <span class="n">sub</span> <span class="o">=</span> <span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">c</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
-    <span class="c1"># Transportation - Parking: automotive improvements (5-22/7-22/8-22, 7-52), gasoline</span>
-    <span class="c1"># stations (x-23), and minor improvements (x-90, incl. 1-90 and surface parking lots).</span>
-    <span class="c1"># Checked first so it wins over the major-class buckets below.</span>
-    <span class="k">if</span> <span class="n">sub</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">'90'</span><span class="p">,</span> <span class="s1">'23'</span><span class="p">)</span> <span class="ow">or</span> <span class="n">c</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">'522'</span><span class="p">,</span> <span class="s1">'722'</span><span class="p">,</span> <span class="s1">'822'</span><span class="p">,</span> <span class="s1">'752'</span><span class="p">):</span>
-        <span class="k">return</span> <span class="s1">'Transportation - Parking'</span>
-    <span class="k">if</span> <span class="n">sub</span> <span class="o">==</span> <span class="s1">'00'</span> <span class="ow">or</span> <span class="n">c</span> <span class="o">==</span> <span class="s1">'241'</span><span class="p">:</span>           <span class="c1"># 2-41 vacant land under common ownership w/ residence</span>
-        <span class="k">return</span> <span class="s1">'Vacant Land'</span>
-    <span class="k">if</span> <span class="n">mj</span> <span class="o">==</span> <span class="s1">'1'</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s1">'Vacant Land'</span>
-    <span class="k">if</span> <span class="n">mj</span> <span class="o">==</span> <span class="s1">'2'</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">sub</span> <span class="ow">in</span> <span class="n">_SFR_SUB</span><span class="p">:</span>                 <span class="k">return</span> <span class="s1">'Single Family Residential'</span>
-        <span class="k">if</span> <span class="n">c</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">'210'</span><span class="p">,</span> <span class="s1">'295'</span><span class="p">):</span>             <span class="k">return</span> <span class="s1">'Townhome / Rowhouse'</span>
-        <span class="k">if</span> <span class="n">c</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">'299'</span><span class="p">,</span> <span class="s1">'297'</span><span class="p">):</span>             <span class="k">return</span> <span class="s1">'Condominium'</span>
-        <span class="k">if</span> <span class="n">c</span> <span class="o">==</span> <span class="s1">'211'</span><span class="p">:</span>                      <span class="k">return</span> <span class="s1">'Small Multi-Family (2-4 units)'</span>
-        <span class="k">if</span> <span class="n">c</span> <span class="o">==</span> <span class="s1">'212'</span><span class="p">:</span>                      <span class="k">return</span> <span class="s1">'Mixed Use'</span>
-        <span class="k">if</span> <span class="n">c</span> <span class="o">==</span> <span class="s1">'225'</span><span class="p">:</span>                      <span class="k">return</span> <span class="s1">'Large Multi-Family (5+ units)'</span>   <span class="c1"># SRO</span>
-        <span class="k">if</span> <span class="n">c</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">'224'</span><span class="p">,</span> <span class="s1">'239'</span><span class="p">,</span> <span class="s1">'240'</span><span class="p">):</span>      <span class="k">return</span> <span class="s1">'Agricultural'</span>
-        <span class="k">return</span> <span class="s1">'Other Residential'</span>          <span class="c1"># 201 garage, 213 co-op, 218/219 B&amp;B, 236, 288</span>
-    <span class="k">if</span> <span class="n">mj</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">'3'</span><span class="p">,</span> <span class="s1">'9'</span><span class="p">):</span>                    <span class="c1"># multi-family (and class-3 incentive)</span>
-        <span class="k">if</span> <span class="n">c</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">'318'</span><span class="p">,</span> <span class="s1">'918'</span><span class="p">):</span>             <span class="k">return</span> <span class="s1">'Mixed Use'</span>
-        <span class="k">if</span> <span class="n">c</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">'399'</span><span class="p">,</span> <span class="s1">'959'</span><span class="p">):</span>             <span class="k">return</span> <span class="s1">'Condominium'</span>
-        <span class="k">return</span> <span class="s1">'Large Multi-Family (5+ units)'</span>
-    <span class="k">if</span> <span class="n">mj</span> <span class="o">==</span> <span class="s1">'4'</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s1">'Other'</span>                      <span class="c1"># not-for-profit (taxable at 20%)</span>
-    <span class="k">if</span> <span class="n">mj</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">'5'</span><span class="p">,</span> <span class="s1">'6'</span><span class="p">,</span> <span class="s1">'7'</span><span class="p">,</span> <span class="s1">'8'</span><span class="p">):</span>          <span class="c1"># commercial / industrial / incentive</span>
-        <span class="k">if</span> <span class="n">mj</span> <span class="o">==</span> <span class="s1">'6'</span><span class="p">:</span>                       <span class="k">return</span> <span class="s1">'Industrial'</span>                      <span class="c1"># class 6 = industrial incentive</span>
-        <span class="k">if</span> <span class="n">c</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">'550'</span><span class="p">,</span><span class="s1">'580'</span><span class="p">,</span><span class="s1">'581'</span><span class="p">,</span><span class="s1">'583'</span><span class="p">,</span><span class="s1">'587'</span><span class="p">,</span><span class="s1">'589'</span><span class="p">,</span><span class="s1">'593'</span><span class="p">):</span> <span class="k">return</span> <span class="s1">'Industrial'</span>     <span class="c1"># 5B industrial</span>
-        <span class="k">if</span> <span class="n">mj</span> <span class="o">==</span> <span class="s1">'8'</span> <span class="ow">and</span> <span class="n">c</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">'880'</span><span class="p">,</span><span class="s1">'881'</span><span class="p">,</span><span class="s1">'893'</span><span class="p">):</span>           <span class="k">return</span> <span class="s1">'Industrial'</span>
-        <span class="k">if</span> <span class="n">c</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">'591'</span><span class="p">,</span><span class="s1">'791'</span><span class="p">,</span><span class="s1">'891'</span><span class="p">,</span><span class="s1">'774'</span><span class="p">):</span>                   <span class="k">return</span> <span class="s1">'Office / Commercial Condo'</span>
-        <span class="k">if</span> <span class="n">c</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">'599'</span><span class="p">,</span><span class="s1">'798'</span><span class="p">,</span><span class="s1">'799'</span><span class="p">,</span><span class="s1">'899'</span><span class="p">,</span><span class="s1">'689'</span><span class="p">):</span>             <span class="k">return</span> <span class="s1">'Office / Commercial Condo'</span>
-        <span class="k">if</span> <span class="n">sub</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">'16'</span><span class="p">,</span><span class="s1">'29'</span><span class="p">,</span><span class="s1">'46'</span><span class="p">,</span><span class="s1">'48'</span><span class="p">):</span>    <span class="k">return</span> <span class="s1">'Hotel'</span>
-        <span class="k">if</span> <span class="n">sub</span> <span class="o">==</span> <span class="s1">'92'</span><span class="p">:</span>                     <span class="k">return</span> <span class="s1">'Mixed Use'</span>
-        <span class="k">if</span> <span class="n">sub</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">'17'</span><span class="p">,</span><span class="s1">'26'</span><span class="p">,</span><span class="s1">'27'</span><span class="p">,</span><span class="s1">'28'</span><span class="p">,</span><span class="s1">'30'</span><span class="p">,</span><span class="s1">'31'</span><span class="p">,</span><span class="s1">'32'</span><span class="p">,</span><span class="s1">'35'</span><span class="p">,</span><span class="s1">'01'</span><span class="p">,</span><span class="s1">'53'</span><span class="p">,</span><span class="s1">'60'</span><span class="p">,</span><span class="s1">'61'</span><span class="p">,</span><span class="s1">'65'</span><span class="p">):</span>
-            <span class="k">return</span> <span class="s1">'Retail / General Commercial'</span>
-        <span class="k">return</span> <span class="s1">'Other Commercial'</span>
-    <span class="k">return</span> <span class="s1">'Other'</span>
-
 <span class="n">gdf</span><span class="p">[</span><span class="s1">'PROPERTY_CATEGORY'</span><span class="p">]</span> <span class="o">=</span> <span class="n">gdf</span><span class="p">[</span><span class="s1">'class'</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">classify</span><span class="p">)</span>
 
 <span class="c1"># --- Exempt flag: class EX/RR, or no taxable assessment ---</span>
@@ -8324,7 +8255,7 @@ Name: loa, dtype: int64
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=928d6fea">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=be390419">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -8338,7 +8269,7 @@ the published 1.4958% — lower, because exemptions/TIF are not removed from the
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=87be2907">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=62d6e5fd">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -8397,7 +8328,7 @@ Derived/published rate ratio: 0.784 (&lt;1 expected: gross EAV exceeds the net t
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=a287761b">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=87b2f366">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -8409,7 +8340,7 @@ of land is taxed uniformly across classes.</p>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=ee7783d5">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=265629d9">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -8499,7 +8430,7 @@ Percent of ALL parcels with tax decrease &lt; -10%: 33.98%
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=5271d505">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=ed04d5fc">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -8512,7 +8443,7 @@ category showing ~0% building share is not.</p>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=fe377dd4">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=48d8addc">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -8566,7 +8497,7 @@ Condominium                     287166     -14.277              0.891          0
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=bfa75862">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=2695be39">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -8578,7 +8509,7 @@ split-rate.</p>
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=80889af1">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=38fd131b">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -8696,7 +8627,7 @@ Vacant Land                                      84.3                 320.9
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=304b8353">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=94d835e4">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -8709,7 +8640,7 @@ folder (<code>analysis/reports/chicago_abatement/</code>) but is <strong>not</st
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=6292ffd8">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=f4c38778">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -8783,7 +8714,7 @@ folder (<code>analysis/reports/chicago_abatement/</code>) but is <strong>not</st
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=e666f7ee">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=e672d9e9">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -8877,7 +8808,7 @@ folder (<code>analysis/reports/chicago_abatement/</code>) but is <strong>not</st
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=5f1430e1">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=6f83b286">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
