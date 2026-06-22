@@ -7,6 +7,7 @@ class→category / class→level-of-assessment logic cannot drift between them.
 Change a parameter or a mapping here, re-run the notebook (or _build_data.py), and every
 downstream report picks it up.
 """
+import numpy as np
 
 # ---- City / data identifiers ----
 CITY_NAME   = 'chicago'
@@ -89,3 +90,18 @@ def classify(c):
             return 'Retail / General Commercial'
         return 'Other Commercial'
     return 'Other'
+
+
+def vacant00_eav_factor(class_series, loa_series, new_loa=0.20):
+    """Per-parcel EAV multiplier for the 'vacant land at 20%' reform — a NON-LVT reform.
+
+    This reform does NOT shift tax onto land. It only reassesses vacant land: parcels whose
+    Cook class code ends in '00' (x-00 vacant land, currently assessed at 10% of market value)
+    move to ``new_loa`` (20%), so their EAV scales by ``new_loa / loa``. Every other parcel is
+    unchanged (factor 1.0). Paired with a revenue-neutral re-strike of the existing rate, this
+    raises vacant land's bill and lowers everyone else's by a small amount — total levy fixed.
+    """
+    c = class_series.astype(str).str.strip().str.upper()
+    mask = c.str.len().ge(3) & c.str.endswith('00') & ~c.isin(['EX', 'RR'])
+    loa = loa_series.fillna(new_loa).replace(0, new_loa)
+    return np.where(mask, new_loa / loa, 1.0)
