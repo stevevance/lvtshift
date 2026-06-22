@@ -1,0 +1,135 @@
+<!doctype html><html lang='en'><head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1'>
+<title>Chicago Land Value Tax — modeled impact</title><style>
+ body{background:#F4F3EF;color:#26235C;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;
+   margin:0;padding:0 0 80px;line-height:1.55}
+ .wrap{max-width:920px;margin:0 auto;padding:0 26px}
+ a{color:#5C6FE3}
+ header{padding:48px 0 8px}
+ h1{font-size:30px;letter-spacing:.2px;margin:0 0 10px}
+ h2{font-size:20px;margin:34px 0 8px;border-top:2px solid #26235C;padding-top:16px}
+ h3{font-size:15px;margin:22px 0 6px}
+ .lede{font-size:15px;color:#45446a;max-width:760px}
+ .cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0}
+ .card{display:block;background:#fff;border:1px solid #DEDDD7;border-radius:10px;padding:18px 20px;
+   text-decoration:none;color:#26235C;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+ .card:hover{border-color:#5C6FE3;box-shadow:0 2px 10px rgba(92,111,227,.18)}
+ .card .t{font-size:16px;font-weight:bold;margin-bottom:4px}
+ .card .d{font-size:13px;color:#8C8B87}
+ ul{font-size:14.5px;color:#45446a;max-width:760px} li{margin:5px 0}
+ table{border-collapse:collapse;width:100%;font-size:13.5px;margin:10px 0}
+ th,td{padding:7px 10px;border-bottom:1px solid #DEDDD7;text-align:left} th{color:#8C8B87;font-size:12px}
+ code{background:#eceadf;padding:1px 5px;border-radius:4px;font-size:90%}
+ blockquote{border-left:3px solid #5C6FE3;margin:12px 0;padding:4px 16px;color:#45446a}
+ .note{background:#fff;border:1px solid #DEDDD7;border-left:4px solid #5C6FE3;border-radius:8px;
+   padding:14px 18px;font-size:13.5px;color:#45446a;margin:18px 0}
+ footer{color:#8C8B87;font-size:12px;border-top:1px solid #DEDDD7;margin-top:46px;padding-top:16px}
+</style></head>
+<body><div class='wrap'>
+<header>
+  <h1>Who pays more, who pays less under a land value tax</h1>
+  <p class='lede'>Revenue-neutral models of shifting the property tax from total value toward land, built
+  from Cook County Assessor and Clerk data for tax year 2024. Two jurisdictions are covered: the
+  City of Chicago's own levy (~830,000 parcels), and the entire Cook County property tax — every
+  taxing body combined, ~1.77&nbsp;million parcels. Built end-to-end with the
+  <a href='https://progressandpoverty.substack.com/p/you-can-now-vibe-code-land-value'>LVTShift pipeline</a> described in
+  <a href='https://progressandpoverty.substack.com/p/you-can-now-vibe-code-land-value'>Progress &amp; Poverty: &ldquo;You can now vibe-code a land value tax.&rdquo;</a></p>
+</header>
+
+<h2>How a land value tax shift works</h2>
+<p class='lede'>Today your property tax is based on your whole property &mdash; the land plus whatever is built on
+it. Build an apartment, renovate, or add a story and your assessed value rises, so your tax bill rises. In
+effect, the current system charges you more for improving your property.</p>
+<p class='lede'>A land value tax shift moves the tax off the building and onto the land underneath it. The
+government collects the exact same total as before &mdash; it is revenue-neutral &mdash; but it gets there
+by charging a high rate on land and a low or zero rate on buildings.</p>
+<p class='lede'>Because the total is fixed, the shift is really a redistribution: your bill rises or falls
+depending on how much of your property's value is land versus building. A vacant lot or surface parking lot
+is almost all land, so it pays a lot more. A tall, dense building is mostly building on a small footprint, so
+it pays less. A typical single-family home lands somewhere in between. The reports below show two versions
+&mdash; a 2.5:1 split-rate (land taxed 2.5 times the building rate, the most Illinois law allows) and a 100%
+building abatement (buildings taxed nothing, a pure land tax). The goal is to stop penalizing people for
+building and instead tax land value, which owners did not create &mdash; nudging owners to develop and
+discouraging holding land idle.</p>
+
+<h2>Chicago — the City of Chicago levy</h2>
+<div class='cards'>
+  <a class='card' href='report.html'><div class='t'>Tax-impact report &rarr;</div>
+    <div class='d'>Both reforms (2.5:1 split-rate and 100% building abatement) with charts and category tables.</div></a>
+  <a class='card' href='by-area.html'><div class='t'>Explore by community area &rarr;</div>
+    <div class='d'>Interactive: pick any of Chicago's 77 community areas and toggle reforms.</div></a>
+  <a class='card' href='area-comparison.html'><div class='t'>South Side vs North Side &rarr;</div>
+    <div class='d'>Englewood + West Englewood compared with Lake View + Lincoln Park.</div></a>
+  <a class='card' href='explainer.html'><div class='t'>Methodology &amp; limitations &rarr;</div>
+    <div class='d'>Full transparency audit: data, levy scope, exemptions, and what the model can and cannot say.</div></a>
+  <a class='card' href='model.html'><div class='t'>Full model notebook &rarr;</div>
+    <div class='d'>The canonical 2.5:1 notebook with all code and outputs.</div></a>
+  <a class='card' href='model-classpreserved.html'><div class='t'>Classification-preserved variant &rarr;</div>
+    <div class='d'>The split-rate run on assessed values, isolating the land-shift from classification removal.</div></a>
+</div>
+
+<h2>Cook County — the full property tax</h2>
+<p class='lede'>Extending the model to <b>all ~1.77M parcels of Cook County</b> (every taxing body's full
+property tax, tax year 2024). The defensible versions are <b>per taxing body</b> — each of ~900
+school/library/park/municipal/county districts shifts its own levy to land within its own boundary,
+revenue-neutral per district, so every district keeps its funding.</p>
+<div class='cards'>
+  <a class='card' href='cook-c2-mv.html'><div class='t'>Cook County — per-district, market-value base (C2-MV) &rarr;</div>
+    <div class='d'>Each taxing body shifts its own levy to land (market-value base). Results by township.</div></a>
+  <a class='card' href='cook-c2-cp.html'><div class='t'>Cook County — per-district, classification-preserved (C2-CP) &rarr;</div>
+    <div class='d'>The pure land shift with Cook County's 10%/25% class ratios kept: housing down, land-heavy uses up.</div></a>
+  <a class='card' href='cook-c1.html'><div class='t'>Cook County — single county-wide rate (C1) &rarr;</div>
+    <div class='d'>Illustrative: one rate replacing all ~900 levies. Note this also <i>pools</i> tax base across the county, a far bigger change than a land tax.</div></a>
+</div>
+
+<h2>What the Chicago model finds</h2>
+<ul>
+  <li><b>Vacant land and most housing pay more; building-heavy commercial pays less.</b> Under the
+    2.5:1 split-rate, single-family homes rise ~29% (median), vacant land +135%, while offices and
+    hotels fall ~54&ndash;55%.</li>
+  <li><b>Downtown commercial gets the biggest tax cuts.</b> Only 10 of 77 community areas see their
+    total bill fall &mdash; led by the Loop (&minus;$90M), Near North (&minus;$45M) and Near West
+    (&minus;$39M), where high-value offices and hotels pay much less &mdash; while the residential
+    neighborhoods see small increases.</li>
+  <li><b>It's geographically progressive in dollars.</b> High-land-value North Side neighborhoods
+    (Lake View, Lincoln Park) bear far more in aggregate than the disinvested South Side, though
+    vacant lots everywhere &mdash; concentrated on the South Side &mdash; see the largest increases.</li>
+</ul>
+
+<div class='note'><b>Important caveat.</b> The reform is modeled on <b>market value</b>, so it does two
+things at once: it shifts tax toward land <i>and</i> it unwinds Cook County's classification system
+(residential assessed at 10% of market vs. commercial at 25%). Much of the housing increase is the
+classification change, not the land shift &mdash; the classification-preserved variant isolates the
+two. The model also covers <b>only the City's own levy</b> (about 1.5 of a ~6.6 percentage-point
+composite bill) and runs on <b>gross</b> equalized value (homeowner/senior exemptions not applied).
+See the <a href='explainer.html'>methodology &amp; limitations</a>.</div>
+
+<h2>A smaller idea: tax vacant land more, without a land value tax</h2>
+<p class='lede'>A land value tax is a large structural change. A much smaller idea already fits inside Cook
+County's existing system, and it is not a land value tax &mdash; it leaves the whole tax structure alone and
+changes one number.</p>
+<p class='lede'>Cook County assesses vacant land at 10% of its market value &mdash; the same low rate as a house
+&mdash; while commercial property is assessed at 25%. So holding an empty lot is cheap, even on a busy
+commercial block. What if a vacant lot were assessed at 20% instead, partway toward the commercial rate?
+Moving a lot from 10% to 20% doubles its taxable value, so it pays roughly twice as much.</p>
+<p class='lede'>There are two ways to do this. In the revenue-neutral version, every taxing district keeps its
+exact budget: when vacant land's value goes up the rate ticks down a little, so a typical vacant lot pays
+about double while everyone else's bill drops by roughly 0.6%. In the other version, today's rates are left
+unchanged, so only vacant land pays more and the county simply collects about $125 million more. Either way,
+the point is to make sitting on an empty lot more expensive &mdash; a small, targeted nudge to build on it
+&mdash; without rebuilding the whole property tax.</p>
+<div class='cards'>
+  <a class='card' href='vacant-land.html'><div class='t'>What if vacant land in Cook County was taxed more like commercial property? &rarr;</div>
+    <div class='d'>A revenue-neutral reassessment of vacant land from 10% to 20%, with each of the ~900 taxing
+    districts re-striking its own rate. Who pays more, who pays less &mdash; by township and property type.
+    Not a land value tax.</div></a>
+</div>
+
+<footer>
+  Built with <a href='https://landeconomics.org/lvtshift'>LVTShift</a>, an open-source land-value-tax modeling framework and a product of
+  the <b>Center for Land Economics</b> (<a href='https://landeconomics.org/lvtshift'>landeconomics.org/lvtshift</a>). Analysis by Chicago
+  Cityscape. Source data: Cook County Assessor parcel &amp; assessed-value datasets and the Cook County Clerk
+  2024 Tax Rate Report. Charts are analytical renderings, not official Center for Land Economics graphics.
+  Background: <a href='https://progressandpoverty.substack.com/p/you-can-now-vibe-code-land-value'>progressandpoverty.substack.com</a>.
+</footer>
+</div></body></html>

@@ -1,4 +1,3 @@
-# Build artifacts (regenerated from the scripts) — not committed
-*.html
-# data/ (parcel caches, tax-code rate file) is also ignored via the repo-root .gitignore
+# Rendered .html reports ARE tracked (built by the _report*.py scripts).
+# data/ (parcel caches, tax-code rate file) is ignored via the repo-root .gitignore too.
 data/
