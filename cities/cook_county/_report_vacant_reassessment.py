@@ -92,13 +92,24 @@ county-wide).</li>
 <div class='notlvt'><b>This is not a land value tax.</b> Nothing here shifts tax off buildings and onto land,
 and there is no split rate or building abatement. The split-rate and abatement models elsewhere on this site
 are a different, larger reform. This page changes <b>one thing only</b> — the assessment ratio on vacant
-(class&nbsp;&ldquo;-00&rdquo;) land — and leaves the rest of the property tax exactly as it is today.</div>
+land — and leaves the rest of the property tax exactly as it is today.</div>
+<div class='notlvt'><b>Which parcels count as &ldquo;vacant land&rdquo; here.</b> Exactly those whose Cook County
+class code <b>ends in &ldquo;-00&rdquo;</b> (the x-00 vacant-land classes, currently assessed at 10%). That is a
+strict class-code rule and nothing else is reassessed. It is <b>deliberately narrower</b> than the
+&ldquo;Vacant Land&rdquo; category used by the split-rate and abatement models elsewhere on this site — those
+also fold in the class-1 land codes, class&nbsp;2-41, and any parcel that carries no building value. Here, a
+parcel is reassessed <b>only if its class ends in -00 and is currently assessed below 20%</b> (the residential
+10% ratio); every other parcel keeps today's assessment. The reform only raises toward 20% and never lowers,
+so the few commercial-rate vacant parcels already assessed at 25% are left untouched.</div>
 <div class='controls'>
   <div><label>Township</label><select id='area'></select></div>
   <div class='toggle'><label>Mode</label>
     <button data-r='rn' class='active'>Revenue-neutral</button><button data-r='raise'>Not revenue-neutral</button></div>
 </div>
 <div class='cards' id='cards'></div>
+<p class='lede' style='margin:16px 0 0'>Categories below use the assessor's standard property groupings. Only parcels
+whose class ends in <b>-00</b> were reassessed; the &ldquo;Vacant Land&rdquo; row also contains non-&ldquo;-00&rdquo;
+land that was <b>not</b> reassessed, so its median blends moved and unmoved parcels.</p>
 <table><thead><tr><th>Category</th><th>Median % change</th><th class='num'>Median %</th><th class='num'>Median $</th><th class='num'>Net change ($)</th><th class='num'>Parcels</th></tr></thead><tbody id='rows'></tbody></table>
 <footer>Built with <a href='__CLE__'>LVTShift</a>, a product of the Center for Land Economics
 (<a href='__CLE__'>landeconomics.org/lvtshift</a>). Assessment ratios and class definitions: Cook County

@@ -172,3 +172,6 @@ cities/seattle/model.ipynb
 analysis/legal/
 
 # Model methodology explainers (analysis/explainers/) ARE tracked.
+
+# Private research / non-public analysis
+analysis/research/

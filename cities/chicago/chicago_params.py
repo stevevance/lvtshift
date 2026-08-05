@@ -96,12 +96,16 @@ def vacant00_eav_factor(class_series, loa_series, new_loa=0.20):
     """Per-parcel EAV multiplier for the 'vacant land at 20%' reform — a NON-LVT reform.
 
     This reform does NOT shift tax onto land. It only reassesses vacant land: parcels whose
-    Cook class code ends in '00' (x-00 vacant land, currently assessed at 10% of market value)
-    move to ``new_loa`` (20%), so their EAV scales by ``new_loa / loa``. Every other parcel is
+    Cook class code ends in '00' AND are currently assessed below ``new_loa`` (the x-00 vacant
+    land at the 10% residential ratio) move up to ``new_loa`` (20%), so their EAV scales by
+    ``new_loa / loa``. Vacant land already at or above 20% (class 5-00 commercial/industrial at
+    25%) is left untouched — the reform only raises, never lowers. Every other parcel is
     unchanged (factor 1.0). Paired with a revenue-neutral re-strike of the existing rate, this
     raises vacant land's bill and lowers everyone else's by a small amount — total levy fixed.
     """
     c = class_series.astype(str).str.strip().str.upper()
-    mask = c.str.len().ge(3) & c.str.endswith('00') & ~c.isin(['EX', 'RR'])
     loa = loa_series.fillna(new_loa).replace(0, new_loa)
+    # Only ever RAISE toward new_loa: parcels already assessed at/above it (e.g. class 5-00
+    # commercial/industrial vacant at 25%) are left untouched, never lowered.
+    mask = c.str.len().ge(3) & c.str.endswith('00') & ~c.isin(['EX', 'RR']) & (loa < new_loa)
     return np.where(mask, new_loa / loa, 1.0)
