@@ -1,9 +1,11 @@
 """Standalone page: 'What if vacant land in Cook County was taxed more like commercial property?'
 
 Renders data/parcels_vacant_reassessment.parquet (built by _build_vacant_reassessment.py) as a
-single self-contained HTML page: a township dropdown, summary cards, and a category table with
-diverging bars. ONE reform only — vacant land reassessed 10% -> 20% within the existing tax — and
-the page states emphatically that this is NOT a land value tax. Published as vacant-land.html.
+single self-contained HTML page: a township dropdown, two toggles, summary cards, and a category
+table with diverging bars. FOUR scenarios — vacant land reassessed to 20% (partway) or 25% (the
+commercial maximum), each either revenue-neutral (rates re-struck) or not (rates unchanged, the
+county collects the extra). The page states emphatically that this is NOT a land value tax.
+Published as vacant-land.html.
 """
 import json
 from pathlib import Path
@@ -14,6 +16,8 @@ ARTICLE = 'https://progressandpoverty.substack.com/p/you-can-now-vibe-code-land-
 CLE = 'https://landeconomics.org/lvtshift'
 CLERK = 'https://www.cookcountyclerkil.gov/property-taxes/tax-extension-and-rates'
 
+SCEN = ['rn20', 'rz20', 'rn25', 'rz25']
+
 gs = pd.read_parquet('data/parcels_vacant_reassessment.parquet')
 gs['township'] = gs['township'].fillna('(unknown)')
 
@@ -21,22 +25,19 @@ gs['township'] = gs['township'].fillna('(unknown)')
 def aggregate(df):
     cats = []
     for cat, d in df.groupby('PROPERTY_CATEGORY'):
-        cats.append({
-            'cat': cat, 'n': int(len(d)),
-            'pct_rn': None if d['vac_pct'].isna().all() else round(float(d['vac_pct'].median()), 1),
-            'medd_rn': int(round(float(d['vac_change'].median()))),
-            'net_rn': int(d['vac_change'].sum()),
-            'pct_raise': None if d['raise_pct'].isna().all() else round(float(d['raise_pct'].median()), 1),
-            'medd_raise': int(round(float(d['raise_change'].median()))),
-            'net_raise': int(d['raise_change'].sum()),
-        })
-    cats.sort(key=lambda r: (r['pct_rn'] if r['pct_rn'] is not None else -999), reverse=True)
-    return {'n': int(len(df)),
-            'med_rn': round(float(df['vac_pct'].median()), 1),
-            'net_rn': int(df['vac_change'].sum()),
-            'med_raise': round(float(df['raise_pct'].median()), 1),
-            'net_raise': int(df['raise_change'].sum()),
-            'cats': cats}
+        row = {'cat': cat, 'n': int(len(d))}
+        for s in SCEN:
+            pc, ch = d[f'{s}_pct'], d[f'{s}_change']
+            row[f'{s}_pct'] = None if pc.isna().all() else round(float(pc.median()), 1)
+            row[f'{s}_medd'] = int(round(float(ch.median())))
+            row[f'{s}_net'] = int(ch.sum())
+        cats.append(row)
+    top = {'n': int(len(df)), 'cats': cats}
+    for s in SCEN:
+        top[f'{s}_med'] = round(float(df[f'{s}_pct'].median()), 1)
+        top[f'{s}_net'] = int(df[f'{s}_change'].sum())
+    return top
+
 
 by_area = {'All Cook County': aggregate(gs)}
 for area, d in gs.groupby('township'):
@@ -44,6 +45,11 @@ for area, d in gs.groupby('township'):
 areas = ['All Cook County'] + sorted(a for a in by_area if a != 'All Cook County')
 DATA = {'areas': areas, 'byArea': by_area}
 print(f'{len(areas)-1} townships + All Cook County')
+
+# County-wide "extra revenue" figures for the lede (not-revenue-neutral mode)
+allck = by_area['All Cook County']
+RZ20M = f"{round(allck['rz20_net']/1e6):,}"
+RZ25M = f"{round(allck['rz25_net']/1e6):,}"
 
 html = """<!doctype html><html lang='en'><head><meta charset='utf-8'>
 <meta name='viewport' content='width=device-width,initial-scale=1'>
@@ -77,39 +83,50 @@ html = """<!doctype html><html lang='en'><head><meta charset='utf-8'>
 <p class='lede'>Cook County assesses property by use. Homes and <b>vacant land</b> are assessed at <b>10%</b> of
 their market value; commercial and industrial property at <b>25%</b>. Because vacant land is assessed at the
 low residential rate, holding an empty lot is cheap — even on a busy commercial street. This page asks a
-narrow question: what if vacant land were assessed at <b>20%</b> instead — partway toward the commercial
-rate — to nudge owners to build rather than sit on it?</p>
-<p class='lede'>Two versions are shown — use the toggle to switch:</p>
+narrow question: what if vacant land were assessed <b>higher</b> — to nudge owners to build rather than sit on
+it? Use the toggles to choose <b>how high</b> and <b>how the money is handled</b>:</p>
 <ul class='lede'>
+<li><b>Target 20% or 25%.</b> <b>20%</b> is partway to the commercial rate; <b>25%</b> is the commercial /
+industrial maximum — the legal ceiling under Illinois' classification limit.</li>
 <li><b>Revenue-neutral</b>: each of Cook County's ~900 taxing bodies keeps its exact levy and re-strikes its
-rate over the slightly larger tax base, so vacant land's bill goes up and every other property's goes down
-by a small amount (the county collects the same total).</li>
+rate over the slightly larger tax base, so vacant land's bill goes up and every other property's goes down by
+a small amount (the county collects the same total).</li>
 <li><b>Not revenue-neutral</b>: today's rates are left unchanged, so <b>only vacant land pays more</b> — every
-other property is untouched — and the county simply collects the extra (about <b>$125&nbsp;million</b> more
-county-wide).</li>
+other property is untouched — and the county simply collects the extra (about <b>$__RZ20M__&nbsp;million</b>
+more county-wide at 20%, or <b>$__RZ25M__&nbsp;million</b> at 25%).</li>
 </ul>
 <p class='lede'>Results are grouped by assessment township; positive means the parcel pays more.</p></header>
 <div class='notlvt'><b>This is not a land value tax.</b> Nothing here shifts tax off buildings and onto land,
 and there is no split rate or building abatement. The split-rate and abatement models elsewhere on this site
 are a different, larger reform. This page changes <b>one thing only</b> — the assessment ratio on vacant
 land — and leaves the rest of the property tax exactly as it is today.</div>
-<div class='notlvt'><b>Which parcels count as &ldquo;vacant land&rdquo; here.</b> Exactly those whose Cook County
-class code <b>ends in &ldquo;-00&rdquo;</b> (the x-00 vacant-land classes, currently assessed at 10%). That is a
-strict class-code rule and nothing else is reassessed. It is <b>deliberately narrower</b> than the
-&ldquo;Vacant Land&rdquo; category used by the split-rate and abatement models elsewhere on this site — those
-also fold in the class-1 land codes, class&nbsp;2-41, and any parcel that carries no building value. Here, a
-parcel is reassessed <b>only if its class ends in -00 and is currently assessed below 20%</b> (the residential
-10% ratio); every other parcel keeps today's assessment. The reform only raises toward 20% and never lowers,
-so the few commercial-rate vacant parcels already assessed at 25% are left untouched.</div>
+<div class='notlvt'><b>Exactly which parcels are reassessed.</b> Only the <b>x-00 vacant-land classes currently
+assessed below the 25% commercial rate</b> — overwhelmingly class <b>1-00 &ldquo;Vacant Land&rdquo;</b> (about
+59,000 parcels), plus a few dozen 2-00/3-00/8-00 vacant codes. Those parcels — and <b>only</b> those — make up
+the <b>&ldquo;Vacant land (reassessed)&rdquo;</b> row in the table, so the bar you see is exactly the set being
+reassessed. Two related classes are vacant land but are <b>left untouched</b>, and are broken out as their own
+rows so nothing is hidden: <b>class 2-41</b> (&ldquo;vacant land under common ownership with an adjacent
+residence&rdquo; — homeowner side-lots), and the handful of <b>5-00</b> parcels already assessed at the 25%
+commercial rate. The reform only ever <b>raises</b> toward the target and never lowers.</div>
+<div class='notlvt'><b>Why class 1-90 is excluded.</b> The assessor also has class <b>1-90, &ldquo;Minor
+Improvement on Vacant Land&rdquo;</b> (about 2,600 parcels), which it files alongside vacant land. We looked
+at a sample across the county and found it is <b>too mixed to reassess as one class</b>: some are genuinely
+empty lots that arguably belong in 1-00; some are <b>surface parking lots</b> that belong in the commercial
+5-90 class; and some are truly undevelopable — land <b>under high-tension power lines</b> or <b>beneath the
+CTA &ldquo;L&rdquo; tracks</b> — that correctly stays 1-90. Rather than double the assessment on all of them,
+we <b>exclude 1-90</b> here and flag it as a class ripe for parcel-by-parcel <b>reclassification</b>.</div>
 <div class='controls'>
   <div><label>Township</label><select id='area'></select></div>
+  <div class='toggle'><label>Assess vacant land at</label>
+    <button data-t='20' class='active'>20%</button><button data-t='25'>25% (max)</button></div>
   <div class='toggle'><label>Mode</label>
-    <button data-r='rn' class='active'>Revenue-neutral</button><button data-r='raise'>Not revenue-neutral</button></div>
+    <button data-m='rn' class='active'>Revenue-neutral</button><button data-m='rz'>Not revenue-neutral</button></div>
 </div>
 <div class='cards' id='cards'></div>
-<p class='lede' style='margin:16px 0 0'>Categories below use the assessor's standard property groupings. Only parcels
-whose class ends in <b>-00</b> were reassessed; the &ldquo;Vacant Land&rdquo; row also contains non-&ldquo;-00&rdquo;
-land that was <b>not</b> reassessed, so its median blends moved and unmoved parcels.</p>
+<p class='lede' style='margin:16px 0 0'>Categories below use the assessor's standard property groupings, except
+that the reassessed vacant lots are pulled into their own <b>&ldquo;Vacant land (reassessed)&rdquo;</b> row so it
+matches the parcels actually being reassessed. Every other row is <b>not</b> reassessed: under
+&ldquo;revenue-neutral&rdquo; it sees a small decrease; under &ldquo;not revenue-neutral&rdquo; it is unchanged.</p>
 <table><thead><tr><th>Category</th><th>Median % change</th><th class='num'>Median %</th><th class='num'>Median $</th><th class='num'>Net change ($)</th><th class='num'>Parcels</th></tr></thead><tbody id='rows'></tbody></table>
 <footer>Built with <a href='__CLE__'>LVTShift</a>, a product of the Center for Land Economics
 (<a href='__CLE__'>landeconomics.org/lvtshift</a>). Assessment ratios and class definitions: Cook County
@@ -127,18 +144,18 @@ DATA.areas.forEach(a=>{const o=document.createElement('option');o.value=a;o.text
 function money(x){const s=x<0?'-':'';return s+'$'+Math.abs(x).toLocaleString();}
 function moneyS(x){return (x>0?'+':'')+money(x);}
 function pct(x){return x===null?'—':(x>=0?'+':'')+x.toFixed(1)+'%';}
-let mode='rn';
+let tgt='20', mode='rn';
 function render(){
   const a=DATA.byArea[sel.value];
   const rn=mode==='rn';
-  const med=rn?a.med_rn:a.med_raise, net=rn?a.net_rn:a.net_raise;
+  const med=a[mode+tgt+'_med'], net=a[mode+tgt+'_net'];
   const netSub=rn?'≈$0 county-wide (revenue-neutral)':'extra revenue raised (a tax increase)';
-  const medSub=rn?'vacant 20%, rates re-struck (not an LVT)':'vacant 20%, rates unchanged (not an LVT)';
+  const medSub='vacant '+tgt+'%, '+(rn?'rates re-struck':'rates unchanged')+' (not an LVT)';
   document.getElementById('cards').innerHTML=
     "<div class='sc'><h4>Overall median change</h4><div class='big "+(med>=0?'up':'down')+"'>"+pct(med)+"</div><div class='sub'>"+medSub+"</div></div>"+
     "<div class='sc'><h4>Aggregate net change</h4><div class='big'>"+moneyS(net)+"</div><div class='sub'>"+netSub+"</div></div>"+
     "<div class='sc'><h4>Modeled parcels</h4><div class='big'>"+a.n.toLocaleString()+"</div><div class='sub'>non-exempt, "+sel.value+"</div></div>";
-  const kp=rn?'pct_rn':'pct_raise', km=rn?'medd_rn':'medd_raise', kn=rn?'net_rn':'net_raise';
+  const kp=mode+tgt+'_pct', km=mode+tgt+'_medd', kn=mode+tgt+'_net';
   const rows=a.cats.slice().sort((x,y)=>((y[kp]??-999)-(x[kp]??-999)));
   const scale=Math.max(1,...rows.map(r=>Math.abs(r[kp]??0)));
   document.getElementById('rows').innerHTML=rows.map(r=>{
@@ -150,13 +167,17 @@ function render(){
 }
 sel.addEventListener('change',render);
 document.querySelectorAll('.toggle button').forEach(b=>b.addEventListener('click',()=>{
-  document.querySelectorAll('.toggle button').forEach(x=>x.classList.remove('active'));
-  b.classList.add('active');mode=b.dataset.r;render();}));
+  const grp=b.parentElement;
+  grp.querySelectorAll('button').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active');
+  if(b.dataset.t)tgt=b.dataset.t; if(b.dataset.m)mode=b.dataset.m;
+  render();}));
 render();
 </script></body></html>"""
-for k, v in {'__BG__':BG,'__INK__':INK,'__BLUE__':BLUE,'__MUTED__':MUTED,'__GRID__':GRID,
-             '__ARTICLE__':ARTICLE,'__CLE__':CLE,'__CLERK__':CLERK}.items():
+for k, v in {'__BG__': BG, '__INK__': INK, '__BLUE__': BLUE, '__MUTED__': MUTED, '__GRID__': GRID,
+             '__ARTICLE__': ARTICLE, '__CLE__': CLE, '__CLERK__': CLERK,
+             '__RZ20M__': RZ20M, '__RZ25M__': RZ25M}.items():
     html = html.replace(k, v)
 html = html.replace('__DATA__', json.dumps(DATA))
 Path('cook_vacant_reassessment.html').write_text(html)
-print('Wrote cook_vacant_reassessment.html (%d KB)' % (len(html)//1024))
+print('Wrote cook_vacant_reassessment.html (%d KB)' % (len(html) // 1024))
