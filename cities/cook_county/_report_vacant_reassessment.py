@@ -100,21 +100,6 @@ more county-wide at 20%, or <b>$__RZ25M__&nbsp;million</b> at 25%).</li>
 and there is no split rate or building abatement. The split-rate and abatement models elsewhere on this site
 are a different, larger reform. This page changes <b>one thing only</b> — the assessment ratio on vacant
 land — and leaves the rest of the property tax exactly as it is today.</div>
-<div class='notlvt'><b>Exactly which parcels are reassessed.</b> Only the <b>x-00 vacant-land classes currently
-assessed below the 25% commercial rate</b> — overwhelmingly class <b>1-00 &ldquo;Vacant Land&rdquo;</b> (about
-59,000 parcels), plus a few dozen 2-00/3-00/8-00 vacant codes. Those parcels — and <b>only</b> those — make up
-the <b>&ldquo;Vacant land (reassessed)&rdquo;</b> row in the table, so the bar you see is exactly the set being
-reassessed. Two related classes are vacant land but are <b>left untouched</b>, and are broken out as their own
-rows so nothing is hidden: <b>class 2-41</b> (&ldquo;vacant land under common ownership with an adjacent
-residence&rdquo; — homeowner side-lots), and the handful of <b>5-00</b> parcels already assessed at the 25%
-commercial rate. The reform only ever <b>raises</b> toward the target and never lowers.</div>
-<div class='notlvt'><b>Why class 1-90 is excluded.</b> The assessor also has class <b>1-90, &ldquo;Minor
-Improvement on Vacant Land&rdquo;</b> (about 2,600 parcels), which it files alongside vacant land. We looked
-at a sample across the county and found it is <b>too mixed to reassess as one class</b>: some are genuinely
-empty lots that arguably belong in 1-00; some are <b>surface parking lots</b> that belong in the commercial
-5-90 class; and some are truly undevelopable — land <b>under high-tension power lines</b> or <b>beneath the
-CTA &ldquo;L&rdquo; tracks</b> — that correctly stays 1-90. Rather than double the assessment on all of them,
-we <b>exclude 1-90</b> here and flag it as a class ripe for parcel-by-parcel <b>reclassification</b>.</div>
 <div class='controls'>
   <div><label>Township</label><select id='area'></select></div>
   <div class='toggle'><label>Assess vacant land at</label>
@@ -128,6 +113,21 @@ that the reassessed vacant lots are pulled into their own <b>&ldquo;Vacant land 
 matches the parcels actually being reassessed. Every other row is <b>not</b> reassessed: under
 &ldquo;revenue-neutral&rdquo; it sees a small decrease; under &ldquo;not revenue-neutral&rdquo; it is unchanged.</p>
 <table><thead><tr><th>Category</th><th>Median % change</th><th class='num'>Median %</th><th class='num'>Median $</th><th class='num'>Net change ($)</th><th class='num'>Parcels</th></tr></thead><tbody id='rows'></tbody></table>
+<div class='notlvt'><b>Exactly which parcels are reassessed.</b> Only the <b>x-00 vacant-land classes currently
+assessed below the 25% commercial rate</b> — overwhelmingly class <b>1-00 &ldquo;Vacant Land&rdquo;</b> (about
+59,000 parcels), plus a few dozen 2-00/3-00/8-00 vacant codes. Those parcels — and <b>only</b> those — make up
+the <b>&ldquo;Vacant land (reassessed)&rdquo;</b> row in the table above, so the bar you see is exactly the set
+being reassessed. Two related classes are vacant land but are <b>left untouched</b>, and are broken out as their
+own rows so nothing is hidden: <b>class 2-41</b> (&ldquo;vacant land under common ownership with an adjacent
+residence&rdquo; — homeowner side-lots), and the handful of <b>5-00</b> parcels already assessed at the 25%
+commercial rate. The reform only ever <b>raises</b> toward the target and never lowers.</div>
+<div class='notlvt'><b>Why class 1-90 is excluded.</b> The assessor also has class <b>1-90, &ldquo;Minor
+Improvement on Vacant Land&rdquo;</b> (about 2,600 parcels), which it files alongside vacant land. We looked
+at a sample across the county and found it is <b>too mixed to reassess as one class</b>: some are genuinely
+empty lots that arguably belong in 1-00; some are <b>surface parking lots</b> that belong in the commercial
+5-90 class; and some are truly undevelopable — land <b>under high-tension power lines</b> or <b>beneath the
+CTA &ldquo;L&rdquo; tracks</b> — that correctly stays 1-90. Rather than double the assessment on all of them,
+we <b>exclude 1-90</b> here and flag it as a class ripe for parcel-by-parcel <b>reclassification</b>.</div>
 <footer>Built with <a href='__CLE__'>LVTShift</a>, a product of the Center for Land Economics
 (<a href='__CLE__'>landeconomics.org/lvtshift</a>). Assessment ratios and class definitions: Cook County
 Assessor. Levies/rates: Cook County Clerk <a href='__CLERK__'>Tax Extension &amp; Rates</a> (TY2024 Tax Code
