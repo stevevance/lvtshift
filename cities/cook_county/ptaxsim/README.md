@@ -114,3 +114,9 @@ other class is unchanged in dollars, and county-wide collections rise **+0.99%**
   of TIF diversion, so its revenue-neutral column carries the TIF gain rather than showing zero.
 - The behavioral response — owners developing or selling land that has become more expensive
   to hold — is not modeled. This is a first-round incidence estimate.
+
+## Report
+
+`report.html` — a standalone page of the result: the class table with both rate modes, the
+class-1 breakout, the bill algorithm, and the two validation checks. Built by hand from the
+CSVs above rather than by a script, since the numbers are fixed once `build_vacant25.py` runs.

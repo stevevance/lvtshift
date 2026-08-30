@@ -1,0 +1,397 @@
+<!doctype html><html lang='en'><head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1'>
+<title>Cook County Class 1-00 at 25%</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Public+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+:root{
+  --ground:#E8EBE6; --surface:#FBFCFA; --surface-2:#F2F4F0;
+  --ink:#141C18; --ink-2:#3C4A43; --muted:#5D6B63; --rule:#CCD3CB; --rule-soft:#DDE2DA;
+  --rise:#BC5A00; --fall:#008F62; --axis:#8A968D;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#101512; --surface:#181F1B; --surface-2:#1E2621;
+    --ink:#E7EDE8; --ink-2:#BDC8C1; --muted:#93A29B; --rule:#2B342E; --rule-soft:#232B26;
+    --rise:#D07C24; --fall:#28A484; --axis:#5E6E66;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#101512; --surface:#181F1B; --surface-2:#1E2621;
+  --ink:#E7EDE8; --ink-2:#BDC8C1; --muted:#93A29B; --rule:#2B342E; --rule-soft:#232B26;
+  --rise:#D07C24; --fall:#28A484; --axis:#5E6E66;
+}
+
+*{box-sizing:border-box}
+body{
+  background:var(--ground); color:var(--ink);
+  font-family:"Public Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  font-size:16px; line-height:1.6; margin:0; padding:0 0 88px;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:940px; margin:0 auto; padding:0 24px}
+.num{font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace; font-variant-numeric:tabular-nums}
+
+/* ---- masthead ---- */
+header{padding:64px 0 0}
+.eyebrow{
+  font-family:"IBM Plex Mono",monospace; font-size:11.5px; font-weight:500;
+  letter-spacing:.14em; text-transform:uppercase; color:var(--muted); margin:0 0 18px;
+}
+h1{
+  font-family:Fraunces,Georgia,"Times New Roman",serif;
+  font-variation-settings:"SOFT" 0,"WONK" 0,"opsz" 96;
+  font-weight:600; font-size:clamp(30px,4.4vw,45px); line-height:1.12; letter-spacing:-.015em;
+  margin:0; max-width:19ch; text-wrap:balance;
+}
+.standfirst{max-width:66ch; color:var(--ink-2); font-size:17px; margin:20px 0 0}
+.standfirst b{font-weight:600; color:var(--ink)}
+
+.note{
+  margin:28px 0 0; padding:14px 18px; background:var(--surface-2);
+  border-left:3px solid var(--axis); border-radius:0 6px 6px 0;
+  font-size:14.5px; color:var(--ink-2); max-width:72ch;
+}
+.note strong{color:var(--ink)}
+
+/* ---- headline figures ---- */
+.figures{
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:1px;
+  background:var(--rule); border:1px solid var(--rule); border-radius:8px;
+  overflow:hidden; margin:44px 0 0;
+}
+.fig{background:var(--surface); padding:20px 22px 22px}
+.fig h3{
+  font-family:"IBM Plex Mono",monospace; font-size:11px; font-weight:500; letter-spacing:.11em;
+  text-transform:uppercase; color:var(--muted); margin:0 0 12px;
+}
+.fig .v{
+  font-family:Fraunces,Georgia,serif; font-variation-settings:"SOFT" 0,"WONK" 0,"opsz" 72;
+  font-size:34px; font-weight:600; line-height:1; letter-spacing:-.02em; font-variant-numeric:tabular-nums;
+}
+.fig .v.up{color:var(--rise)} .fig .v.down{color:var(--fall)}
+.fig .sub{font-size:13px; color:var(--muted); margin-top:8px; line-height:1.45}
+
+/* ---- section furniture ---- */
+section{margin:56px 0 0}
+h2{
+  font-family:Fraunces,Georgia,serif; font-variation-settings:"SOFT" 0,"WONK" 0,"opsz" 48;
+  font-size:24px; font-weight:600; letter-spacing:-.01em; margin:0 0 6px; text-wrap:balance;
+}
+.sectionnote{color:var(--muted); font-size:14.5px; margin:0 0 22px; max-width:70ch}
+
+/* ---- mode switch ---- */
+.modes{display:flex; gap:0; margin:0 0 6px; border:1px solid var(--rule); border-radius:7px; overflow:hidden; width:fit-content}
+.modes button{
+  font-family:inherit; font-size:13.5px; font-weight:500; padding:9px 16px;
+  background:var(--surface); color:var(--ink-2); border:0; cursor:pointer; transition:background .15s,color .15s;
+}
+.modes button + button{border-left:1px solid var(--rule)}
+.modes button[aria-pressed="true"]{background:var(--ink); color:var(--ground)}
+.modes button:focus-visible{outline:2px solid var(--rise); outline-offset:-2px}
+.modeblurb{font-size:14px; color:var(--muted); margin:12px 0 20px; max-width:70ch; min-height:2.9em}
+
+/* ---- table ---- */
+.scroller{overflow-x:auto; border:1px solid var(--rule); border-radius:8px; background:var(--surface)}
+table{border-collapse:collapse; width:100%; min-width:720px; font-size:14px}
+caption{text-align:left; padding:0 0 10px; font-size:13px; color:var(--muted)}
+th{
+  font-family:"IBM Plex Mono",monospace; font-size:10.5px; font-weight:500; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--muted); text-align:right; padding:13px 14px;
+  border-bottom:1px solid var(--rule); white-space:nowrap;
+}
+th.l{text-align:left}
+td{padding:11px 14px; border-bottom:1px solid var(--rule-soft); text-align:right; vertical-align:middle}
+tr:last-child td{border-bottom:0}
+td.l{text-align:left}
+.cls{font-weight:600; white-space:nowrap}
+.cls span{display:block; font-weight:400; font-size:12.5px; color:var(--muted); margin-top:1px}
+tr.target td{background:var(--surface-2)}
+.up{color:var(--rise); font-weight:600} .down{color:var(--fall); font-weight:600}
+.flat{color:var(--muted)}
+
+/* diverging bar */
+td.bar{width:34%; min-width:200px; padding-right:20px}
+.track{position:relative; height:20px}
+.zero{position:absolute; left:var(--zx); top:-2px; bottom:-2px; width:1px; background:var(--axis); opacity:.55}
+.fillbar{position:absolute; top:3px; height:14px; border-radius:2px}
+.fillbar.pos{background:var(--rise); border-radius:2px 4px 4px 2px}
+.fillbar.neg{background:var(--fall); border-radius:4px 2px 2px 4px}
+.axislabels{position:relative; height:22px; margin:0 20px 0 14px; font-family:"IBM Plex Mono",monospace;
+  font-size:10.5px; color:var(--muted)}
+.axislabels span{position:absolute; top:4px; white-space:nowrap}
+.axislabels .lo{left:0} .axislabels .hi{right:0}
+.axislabels .zed{transform:translateX(-50%)}
+
+/* ---- prose blocks ---- */
+.prose{max-width:68ch}
+.prose p{margin:0 0 15px; color:var(--ink-2)}
+.prose strong{color:var(--ink); font-weight:600}
+.check{
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px; margin:22px 0 0;
+}
+.checkcard{background:var(--surface); border:1px solid var(--rule); border-radius:8px; padding:16px 18px}
+.checkcard h4{
+  font-family:"IBM Plex Mono",monospace; font-size:10.5px; font-weight:500; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--muted); margin:0 0 10px;
+}
+.checkcard .pair{display:flex; justify-content:space-between; font-size:13.5px; padding:4px 0; gap:12px}
+.checkcard .pair span:last-child{font-family:"IBM Plex Mono",monospace; font-variant-numeric:tabular-nums}
+.checkcard .delta{border-top:1px solid var(--rule-soft); margin-top:8px; padding-top:8px; font-weight:600}
+
+ul.plain{margin:0; padding-left:1.1em; color:var(--ink-2)}
+ul.plain li{margin:0 0 10px}
+
+pre{
+  background:var(--surface); border:1px solid var(--rule); border-radius:8px;
+  padding:16px 18px; overflow-x:auto; font-family:"IBM Plex Mono",monospace;
+  font-size:12.5px; line-height:1.65; color:var(--ink-2); margin:18px 0 0;
+}
+
+footer{
+  margin:64px 0 0; padding-top:20px; border-top:1px solid var(--rule);
+  font-size:13px; color:var(--muted); max-width:74ch;
+}
+footer a{color:var(--ink-2); text-decoration-color:var(--rule)}
+footer a:hover{color:var(--rise)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important; animation:none!important}}
+</style>
+
+</head><body>
+<div class="wrap">
+<header>
+  <p class="eyebrow">Cook County · Tax year 2024 · PTAXSIM</p>
+  <h1>What if vacant land were assessed like commercial property?</h1>
+  <p class="standfirst">Cook County assesses <b>class 1-00 vacant land</b> at 10% of market
+  value — the residential rate. Commercial property is assessed at 25%. This models one change
+  and nothing else: <b>1-00 moves to 25%</b>, and every other class, every taxing body's levy,
+  the equalizer, and every exemption stay exactly as they are.</p>
+  <p class="note"><strong>This is not a land value tax.</strong> There is no split rate, no
+  building abatement, and no shift of tax onto land. It is a reassessment of one class inside
+  the existing classified system — which is why the effect on everyone else is measured in
+  fractions of a percent rather than in double digits.</p>
+</header>
+
+<div class="figures">
+  <div class="fig">
+    <h3>Class 1-00's bill</h3>
+    <div class="v up">+146%</div>
+    <div class="sub">$127.0M → $312.4M across 59,145 parcels. The median 1-00 bill goes from
+    $700 to $1,690.</div>
+  </div>
+  <div class="fig">
+    <h3>Everyone else</h3>
+    <div class="v down">−0.9%</div>
+    <div class="sub">$185M spread across 1.80M other parcels. The median home saves about
+    $43 a year.</div>
+  </div>
+  <div class="fig">
+    <h3>Added to the tax base</h3>
+    <div class="v">+0.9%</div>
+    <div class="sub">$495.7M of assessed value becomes $1,239.2M — a rounding error against a
+    $253B county base.</div>
+  </div>
+</div>
+
+<section>
+  <h2>Aggregate change by class</h2>
+  <p class="sectionnote">Every Cook County major class, tax year 2024. Bars show the change in
+  total dollars billed; the column beside them shows the same change as a percentage of what
+  the class pays today.</p>
+
+  <div class="modes" role="group" aria-label="Rate mode">
+    <button type="button" data-mode="neutral" aria-pressed="true">Revenue-neutral</button>
+    <button type="button" data-mode="fixed" aria-pressed="false">Rates left as struck</button>
+  </div>
+  <p class="modeblurb" id="blurb"></p>
+
+  <div class="scroller">
+    <table>
+      <thead>
+        <tr>
+          <th class="l">Class</th>
+          <th>Parcels</th>
+          <th>Tax today</th>
+          <th class="l">Change in dollars</th>
+          <th>Change</th>
+          <th>%</th>
+        </tr>
+      </thead>
+      <tbody id="rows"></tbody>
+    </table>
+    <div class="axislabels"><span class="lo" id="axmin"></span><span class="zed" id="axzero">0</span><span class="hi" id="axmax"></span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Class 1 is not all vacant land</h2>
+  <p class="sectionnote">Major class 1 holds two codes. Only 1-00 is reassessed here, which is
+  why class 1's aggregate (+133.5%) understates what happens to 1-00 itself (+146%).</p>
+  <div class="scroller">
+    <table>
+      <thead>
+        <tr><th class="l">Code</th><th>Parcels</th><th>Assessed value</th><th>Reassessed</th>
+        <th>Tax today</th><th>Tax after</th><th>%</th></tr>
+      </thead>
+      <tbody>
+        <tr class="target">
+          <td class="l cls">1-00<span>Vacant land</span></td>
+          <td class="num">59,145</td><td class="num">$495.7M</td><td class="num">$1,239.2M</td>
+          <td class="num">$127.0M</td><td class="num">$312.4M</td><td class="num up">+146.0%</td>
+        </tr>
+        <tr>
+          <td class="l cls">1-90<span>Minor improvements</span></td>
+          <td class="num">2,586</td><td class="num">$49.0M</td><td class="num">$49.0M</td>
+          <td class="num">$11.70M</td><td class="num">$11.56M</td><td class="num down">−1.26%</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <h2>Why class 8 falls three times as far</h2>
+  <div class="prose">
+    <p>Every class outside vacant land lands within a hair of −0.9% — except <strong>class 8</strong>,
+    the commercial and industrial incentive class for the south suburbs, which falls
+    <strong>−3.11%</strong>. Nothing special is being done to class 8. It sits in the tax codes
+    that hold a far larger share of the county's vacant land, so when that land is reassessed,
+    those districts' bases grow proportionally more and their rates fall proportionally further.</p>
+    <p>The same geography works the other way for the parcels that gain most: relief concentrates
+    wherever vacant land is thickest, which in Cook County means the south and west suburbs
+    rather than the Loop.</p>
+  </div>
+</section>
+
+<section>
+  <h2>How the bills were rebuilt</h2>
+  <p class="sectionnote">Every figure here comes from the Cook County Assessor's own
+  <span class="num">ptaxsim</span> database and the bill algorithm published with it. No part of
+  this analysis shares code or parameters with the LVTShift model of the same county — it is an
+  independent second opinion.</p>
+  <div class="prose">
+    <p>All 1,859,067 tax-year-2024 parcels are rebuilt from Clerk-stage assessed value, the twelve
+    exemption columns, and each taxing agency's extension over its EAV base:</p>
+  </div>
+<pre>eav         = round(av_clerk × 3.0355)          <span style="opacity:.6">(class 239 farmland: eav = av)</span>
+exe_total   = sum of the twelve exe_* columns
+taxable_eav = max(eav − exe_total, 0), and 0 when eav − exe_total &lt; 150
+agency_rate = agency.total_ext ÷ agency.cty_cook_eav
+bill        = taxable_eav × Σ agency_rate over the pin's tax code</pre>
+
+  <div class="check">
+    <div class="checkcard">
+      <h4>Baseline check</h4>
+      <div class="pair"><span>Rebuilt bills</span><span>$19.2066B</span></div>
+      <div class="pair"><span>Actually billed</span><span>$19.1924B</span></div>
+      <div class="pair delta"><span>Difference</span><span>+0.074%</span></div>
+      <div class="sub" style="font-size:12.5px;color:var(--muted);margin-top:10px">Median error on
+      a single parcel: 0.0003%.</div>
+    </div>
+    <div class="checkcard">
+      <h4>Re-strike check</h4>
+      <div class="pair"><span>To districts, after</span><span>$17.1310B</span></div>
+      <div class="pair"><span>To districts, today</span><span>$17.1302B</span></div>
+      <div class="pair delta"><span>Difference</span><span>+0.005%</span></div>
+      <div class="sub" style="font-size:12.5px;color:var(--muted);margin-top:10px">Every agency's
+      levy comes back whole, which is what makes the mode revenue-neutral.</div>
+    </div>
+    <div class="checkcard">
+      <h4>Where the extra $13.8M goes</h4>
+      <div class="pair"><span>TIFs, after</span><span>$2.0902B</span></div>
+      <div class="pair"><span>TIFs, today</span><span>$2.0764B</span></div>
+      <div class="pair delta"><span>Difference</span><span>+$13.8M</span></div>
+      <div class="sub" style="font-size:12.5px;color:var(--muted);margin-top:10px">A TIF captures
+      the increment inside its own boundary, so the county-wide total is not exactly flat.</div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>What this model does not do</h2>
+  <ul class="plain">
+    <li>The TIF share of each parcel is held at its 2024 value. A real reassessment would move a
+    TIF's base-versus-increment split; the effect is second-order and confined to that $13.8M line.</li>
+    <li>The transit-TIF carve-out, where Chicago Public Schools takes its full share ahead of the
+    TIF, is not modeled. It redistributes among districts and changes no taxpayer's bill.</li>
+    <li>Per-agency rounding to the cent, which real bills apply, is not reproduced. It is worth
+    well under five cents a bill and cancels in aggregate.</li>
+    <li>No behavioral response. Owners who find land more expensive to hold may build on it or
+    sell it, which is the entire point of the policy — and the reason these first-round numbers
+    are a ceiling on the burden and a floor on the benefit.</li>
+  </ul>
+</section>
+
+<footer>
+  Built from <a href="https://github.com/ccao-data/ptaxsim">ptaxsim</a> 2024.0.0, the Cook County
+  Assessor's Office property tax simulator, using its published
+  <span class="num">tax_bill</span> algorithm. Source data: the Assessor's parcel and exemption
+  records, the Clerk's agency extensions and rates, and the Illinois Department of Revenue's
+  final 2024 Cook County equalizer of 3.0355. Analysis code and full per-class tables live in
+  <span class="num">cities/cook_county/ptaxsim/</span> of the LVTShift repository.
+</footer>
+</div>
+
+<script>
+const DATA=[
+ {k:"1",name:"Vacant land",n:61731,cur:138721049,nc:185233110,np:133.53,fc:190530372,fp:137.35},
+ {k:"2",name:"Residential, 1–6 units",n:1587722,cur:11110259906,nc:-96609635,np:-0.87,fc:0,fp:0},
+ {k:"3",name:"Multifamily rental, 7+ units",n:18958,cur:1219636798,nc:-10556537,np:-0.87,fc:0,fp:0},
+ {k:"4",name:"Not-for-profit",n:450,cur:27772126,nc:-233152,np:-0.84,fc:0,fp:0},
+ {k:"5",name:"Commercial & industrial",n:91290,cur:6227322545,nc:-56917333,np:-0.91,fc:0,fp:0},
+ {k:"6",name:"Industrial incentive",n:2427,cur:293488990,nc:-2740245,np:-0.93,fc:0,fp:0},
+ {k:"7",name:"Commercial incentive",n:392,cur:79884664,nc:-700843,np:-0.88,fc:0,fp:0},
+ {k:"8",name:"Commercial/industrial incentive",n:1872,cur:84103645,nc:-2618016,np:-3.11,fc:0,fp:0},
+ {k:"9",name:"Multifamily incentive",n:941,cur:25309711,nc:-256410,np:-1.01,fc:0,fp:0},
+ {k:"0",name:"Exempt / no assessment",n:93284,cur:81820,nc:-583,np:-0.71,fc:0,fp:0}
+];
+const BLURB={
+ neutral:"Each of the 946 taxing bodies holds its 2024 levy fixed and re-strikes its rate over the larger base. Vacant land's share of the bill rises; every other class's falls to match. Total collections are unchanged apart from the $13.8M TIFs capture.",
+ fixed:"The 2024 rates are left exactly as struck. Only class 1-00's bills move — every other class pays the same dollars it pays today — and the county collects $190.5M more, a 0.99% increase."
+};
+const fmtM=v=>{const a=Math.abs(v);
+  if(a>=1e9)return (v<0?"−":"+")+"$"+(a/1e9).toFixed(2)+"B";
+  if(a>=1e6)return (v<0?"−":"+")+"$"+(a/1e6).toFixed(1)+"M";
+  if(a>=1e3)return (v<0?"−":"+")+"$"+(a/1e3).toFixed(0)+"K";
+  return (v<0?"−":"+")+"$"+a.toFixed(0);};
+const fmtCur=v=>v>=1e9?"$"+(v/1e9).toFixed(2)+"B":v>=1e6?"$"+(v/1e6).toFixed(1)+"M":"$"+Math.round(v).toLocaleString();
+const fmtPct=v=>(v>0?"+":v<0?"−":"")+Math.abs(v).toFixed(2)+"%";
+
+function render(mode){
+  const key=mode==="neutral"?"nc":"fc", pkey=mode==="neutral"?"np":"fp";
+  const vals=DATA.map(d=>d[key]);
+  const lo=Math.min(0,...vals), hi=Math.max(0,...vals), span=hi-lo || 1;
+  const zx=(-lo/span*100);
+  document.getElementById("axmin").textContent=lo<0?fmtM(lo):"$0";
+  document.getElementById("axmax").textContent=hi>0?fmtM(hi):"$0";
+  const zed=document.getElementById("axzero");
+  zed.style.left=zx+"%";
+  zed.hidden = zx<6 || zx>94;   // hide when it would collide with an end label
+  document.getElementById("blurb").textContent=BLURB[mode];
+  document.getElementById("rows").innerHTML=DATA.map(d=>{
+    const v=d[key], p=d[pkey];
+    const w=Math.abs(v)/span*100;
+    const bar=v===0?"":`<div class="fillbar ${v>0?"pos":"neg"}" style="${
+      v>0?`left:${zx}%;width:${w}%`:`left:${zx-w}%;width:${w}%`}"></div>`;
+    const cls=v>0?"up":v<0?"down":"flat";
+    return `<tr class="${d.k==="1"?"target":""}">
+      <td class="l cls">Class ${d.k}<span>${d.name}</span></td>
+      <td class="num">${d.n.toLocaleString()}</td>
+      <td class="num">${fmtCur(d.cur)}</td>
+      <td class="bar"><div class="track" style="--zx:${zx}%"><div class="zero"></div>${bar}</div></td>
+      <td class="num ${cls}">${v===0?"—":fmtM(v)}</td>
+      <td class="num ${cls}">${p===0?"—":fmtPct(p)}</td>
+    </tr>`;
+  }).join("");
+}
+document.querySelectorAll(".modes button").forEach(b=>{
+  b.addEventListener("click",()=>{
+    document.querySelectorAll(".modes button").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));
+    render(b.dataset.mode);
+  });
+});
+render("neutral");
+</script>
+
+</body></html>
