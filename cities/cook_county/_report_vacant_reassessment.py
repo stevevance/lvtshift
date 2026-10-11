@@ -188,7 +188,7 @@ included. Sources: Cook County Assessor; Cook County Treasurer tax bills via Chi
 (<a href='__CLE__'>landeconomics.org/lvtshift</a>). Assessment ratios and class definitions: Cook County
 Assessor. Levies/rates: Cook County Clerk <a href='__CLERK__'>Tax Extension &amp; Rates</a> (TY2024 Tax Code
 Agency Rate file); each of ~900 real taxing bodies (TIF districts excluded) re-strikes its own rate over the
-reassessed base, revenue-neutral per district. Analysis by Chicago Cityscape. <b>Limitation:</b> current tax
+reassessed base, revenue-neutral per district. Analysis by Steven Vance. <b>Limitation:</b> current tax
 uses gross equalized value (homeowner/senior exemptions and TIF not removed), so dollar levels run ~8% above
 the official ~$19.2B extension; the revenue-neutral distribution is unaffected. Background:
 <a href='__ARTICLE__'>progressandpoverty.substack.com</a>.</footer>

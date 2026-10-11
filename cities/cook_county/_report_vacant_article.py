@@ -405,7 +405,7 @@ limit and needs only a vote of the Cook County Board of Commissioners.</p>
 <li>City of Chicago building permits and violations, via Chicago Cityscape.</li>
 </ol>
 <footer>Built with <a href='__CLE__'>LVTShift</a>, a product of the Center for Land Economics
-(<a href='__CLE__'>landeconomics.org/lvtshift</a>). Analysis by Chicago Cityscape.
+(<a href='__CLE__'>landeconomics.org/lvtshift</a>). Analysis by Steven Vance.
 Companion to <a href='__ARTICLE_URL__'>&ldquo;__ARTICLE_TITLE__&rdquo;</a>.</footer>
 </div>
 
