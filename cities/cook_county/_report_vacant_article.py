@@ -26,7 +26,8 @@ ASSETS = Path('vacant-land-article-assets')
 # Step 1: Copy chart images next to the page
 ASSETS.mkdir(exist_ok=True)
 IMAGES = {
-    'halsted': RESEARCH / '6300_s_halsted' / '6300-s-halsted-chart.png',
+    'halsted': RESEARCH / '6300-s-halsted-chart-log.png',
+    'built': RESEARCH / 'vacant-built-by-year.png',
     'growth': RESEARCH / 'vacant-built-tax-growth.png',
     'split': RESEARCH / 'split-rate-explainer.png',
 }
@@ -182,6 +183,7 @@ FILL = {
     '__HALSTED_ROWS__': halsted_rows(),
     '__IMG_HALSTED__': f"{ASSETS}/{IMAGES['halsted'].name}",
     '__IMG_GROWTH__': f"{ASSETS}/{IMAGES['growth'].name}",
+    '__IMG_BUILT__': f"{ASSETS}/{IMAGES['built'].name}",
     '__IMG_SPLIT__': f"{ASSETS}/{IMAGES['split'].name}",
     '__EV_N__': f"{len(rd):,}", '__EV_AVN__': f"{len(ev_av):,}", '__EV_BLN__': f"{len(ev_bl):,}",
     '__EV_AV23__': f"{av23/1e6:,.1f}", '__EV_AV24__': f"{av24/1e6:,.1f}",
@@ -276,6 +278,7 @@ then use this page to check our work or explore your own township.</div>
 <tr><td>Median vacant parcel pays <span class='fig'>__VACMED__</span>; single-family home <span class='fig'>__SFHMED__</span>; large multifamily <span class='fig'>__LMFMED__</span></td><td>Same model, median change per parcel. <a href='#model'>Section 4</a></td></tr>
 <tr><td><span class='fig'>__EV_N__</span> vacant lots were built on between 2023 and 2024</td><td>Class 1-00 in TY2023, building class in TY2024. <a href='#redeveloped'>Section 5</a></td></tr>
 <tr><td>Their assessed value rose <span class='fig'>__EV_AVPCT__%</span>; their bills rose <span class='fig'>$__EV_BDIFF__ million</span></td><td>Board of Review values and actual bills. <a href='#redeveloped'>Section 5</a></td></tr>
+<tr><td>Since the 2008 change, fewer vacant lots get built on</td><td>Year-over-year class changes, 2000–2026. <a href='#since2008'>Section 5</a></td></tr>
 <tr><td>Total tax billed in Cook County rose <span class='fig'>4.7%</span> in 2024</td><td>Cook County Clerk, 2024 Tax Rate Report. <a href='#redeveloped'>Section 5</a></td></tr>
 </tbody></table></div>
 
@@ -295,7 +298,7 @@ governments are usually exempt and are not in these counts.</p>
 <p>The corner of 63rd and Halsted in Englewood (PIN 20-20-207-015) held a commercial building until September 2014,
 when the City demolished it under an emergency wrecking permit after a fire. The land&rsquo;s value didn&rsquo;t change.
 Its classification did: from <b>5-92 commercial</b> (25% assessment level) to <b>1-00 vacant land</b> (10%).</p>
-<figure><a href='__IMG_HALSTED__'><img src='__IMG_HALSTED__' alt='Line chart, 2009 to 2025: the land market value at 6300 S Halsted stayed about $95,700 before and after the September 2014 demolition, while the property tax bill fell from $16,782 in 2014 to $1,753 in 2015.'></a>
+<figure><a href='__IMG_HALSTED__'><img src='__IMG_HALSTED__' alt='Line chart on a logarithmic scale, 2009 to 2025: the land market value at 6300 S Halsted stayed about $95,700 before and after the September 2014 demolition, while the property tax bill fell from $16,782 in 2014 to $1,753 in 2015.'></a>
 <figcaption>Land market value = land assessed value ÷ assessment level.</figcaption></figure>
 </div>
 <div class='wide'><div class='scroll'><table>
@@ -384,6 +387,16 @@ Assessor catching up on an existing building. <a href='__EV_CSV__'>Download the 
 <p class='small'><b>New revenue or relief?</b> For taxing bodies under the state&rsquo;s tax cap (PTELL), new construction
 raises the levy they may collect, so it is new revenue. For bodies that set their levy regardless of the tax base, the
 new value instead lowers everyone else&rsquo;s rate a little. Cook County has both kinds.</p>
+
+<h3 id='since2008'>Fewer vacant lots get built on than before 2008</h3>
+<p>In 2008 the Cook County Board passed <a href='https://www.cookcountyclerkil.gov/sites/default/files/publications/2008ordinances.pdf#page=184'>Ordinance 08-O-51</a>,
+which lowered the assessment level for vacant land from 22% to 10% starting in tax year 2009. Before the change, about
+3,000 vacant lots a year got a building. Since 2014 it has been about 1,000 to 1,300 a year. The change took effect
+during the recession and financial crisis, so the drop can&rsquo;t be blamed on it alone, but a lower assessment level
+hasn&rsquo;t brought construction back.</p>
+<figure><a href='__IMG_BUILT__'><img src='__IMG_BUILT__' alt='Bar and line chart, 2000 to 2026: about 3,000 to 3,300 vacant lots a year got a building before 2008; the number fell to 639 in 2011 and has been about 600 to 1,800 a year since, with a 5-year average of 1,191 in 2026. The recession and the 2009 assessment cut are marked.'></a>
+<figcaption>Parcels classed 1-00 in one tax year and in a class 2, 3 or 5 building class the next. Source: Cook County Assessor,
+<a href='https://datacatalog.cookcountyil.gov/d/nj4t-kc8j'>Parcel Universe</a> (nj4t-kc8j).</figcaption></figure>
 
 <h2 id='splitrate'><span class='n'>6</span>Why this isn&rsquo;t a split-rate land value tax</h2>
 <p>A <b>split-rate land value tax</b>, used by Harrisburg, Allentown and other Pennsylvania cities, taxes land at a
