@@ -284,7 +284,7 @@ then use this page to check our work or explore your own township.</div>
 assessment level as homes. Commercial and industrial property is assessed at <b>25%</b>. In tax year 2026 there are
 <b>58,865</b> class 1-00 parcels. The count fell by about a third between 1999 and 2012 and has stayed near 60,000 since.</p>
 <figure>__COUNTS_SVG__<figcaption>Class 1-00 &ldquo;Vacant Land&rdquo; parcels by tax year. 2026 is still being assessed and may change.
-Source: Cook County Assessor parcel universe (nj4t-kc8j).</figcaption></figure>
+Source: Cook County Assessor, <a href='https://datacatalog.cookcountyil.gov/d/nj4t-kc8j'>Parcel Universe</a> on the Cook County Open Data portal (nj4t-kc8j); <a href='https://datacatalog.cookcountyil.gov/resource/nj4t-kc8j.json?$select=year,count(*)&amp;$where=class=%27100%27&amp;$group=year&amp;$order=year'>see the counts query</a>.</figcaption></figure>
 <details><summary>Show the counts for every year</summary><div class='yrs'><table>__COUNT_ROWS__</table></div></details>
 <p class='small'>Two other classes are also vacant land assessed at 10%: <b>1-90</b> (minor improvement on vacant land,
 2,423 parcels in 2026) and <b>2-41</b> (vacant land under common ownership with an adjacent home, 25,050). Counting
