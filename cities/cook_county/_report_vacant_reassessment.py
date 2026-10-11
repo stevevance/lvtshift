@@ -51,6 +51,46 @@ allck = by_area['All Cook County']
 RZ20M = f"{round(allck['rz20_net']/1e6):,}"
 RZ25M = f"{round(allck['rz25_net']/1e6):,}"
 
+# Evidence section: TY2023 class 1-00 lots that had a building by TY2024 (see
+# analysis/research/cook_vacant_redevelopment_2023_2024.md). AV is the Board of Review value in
+# both years and only parcels with it in both years are summed; bills likewise need both years.
+EVIDENCE_CSV = 'vacant-land-redeveloped-2023-2024.csv'
+rd = pd.read_csv('data/vacant_redeveloped_2023_2024.csv', dtype={'pin': str})
+rd.to_csv(EVIDENCE_CSV, index=False)
+MAJOR = {'2': 'Residential (class 2)', '3': 'Apartments, 7+ units (class 3)', '5': 'Commercial / industrial (class 5)'}
+
+
+def evidence_row(label, d):
+    av = d.dropna(subset=['av_2023_board', 'av_2024_board'])
+    bl = d.dropna(subset=['tax_bill_2023', 'tax_bill_2024'])
+    av23, av24 = av['av_2023_board'].sum(), av['av_2024_board'].sum()
+    b23, b24 = bl['tax_bill_2023'].sum(), bl['tax_bill_2024'].sum()
+    return (f"<tr><td class='cat'>{label}</td><td class='num muted'>{len(d):,}</td>"
+            f"<td class='num'>${av23/1e6:,.1f}M</td><td class='num'>${av24/1e6:,.1f}M</td>"
+            f"<td class='num up'>+{(av24/av23-1)*100:,.0f}%</td>"
+            f"<td class='num'>${b23/1e6:,.1f}M</td><td class='num'>${b24/1e6:,.1f}M</td>"
+            f"<td class='num up'>+${(b24-b23)/1e6:,.1f}M</td></tr>")
+
+
+rd['major'] = rd['class_2024'].str[0]
+EV_ROWS = ''.join(evidence_row(MAJOR[m], d) for m, d in rd.groupby('major'))
+EV_ROWS += evidence_row('<b>All redeveloped lots</b>', rd).replace("<td ", "<td style='border-top:2px solid #26235C' ")
+ev_av = rd.dropna(subset=['av_2023_board', 'av_2024_board'])
+ev_bl = rd.dropna(subset=['tax_bill_2023', 'tax_bill_2024'])
+EV = {
+    '__EV_N__': f"{len(rd):,}",
+    '__EV_AVN__': f"{len(ev_av):,}",
+    '__EV_BLN__': f"{len(ev_bl):,}",
+    '__EV_AV23__': f"{ev_av['av_2023_board'].sum()/1e6:,.1f}",
+    '__EV_AV24__': f"{ev_av['av_2024_board'].sum()/1e6:,.1f}",
+    '__EV_AVPCT__': f"{(ev_av['av_2024_board'].sum()/ev_av['av_2023_board'].sum()-1)*100:,.0f}",
+    '__EV_B23__': f"{ev_bl['tax_bill_2023'].sum()/1e6:,.1f}",
+    '__EV_B24__': f"{ev_bl['tax_bill_2024'].sum()/1e6:,.1f}",
+    '__EV_BDIFF__': f"{(ev_bl['tax_bill_2024'].sum()-ev_bl['tax_bill_2023'].sum())/1e6:,.0f}",
+    '__EV_ROWS__': EV_ROWS,
+    '__EV_CSV__': EVIDENCE_CSV,
+}
+
 html = """<!doctype html><html lang='en'><head><meta charset='utf-8'>
 <meta name='viewport' content='width=device-width,initial-scale=1'>
 <title>Taxing Cook County vacant land more like commercial property</title><style>
@@ -128,6 +168,22 @@ empty lots that arguably belong in 1-00; some are <b>surface parking lots</b> th
 5-90 class; and some are truly undevelopable — land <b>under high-tension power lines</b> or <b>beneath the
 CTA &ldquo;L&rdquo; tracks</b> — that correctly stays 1-90. Rather than double the assessment on all of them,
 we <b>exclude 1-90</b> here and flag it as a class ripe for parcel-by-parcel <b>reclassification</b>.</div>
+<h2 id='redeveloped' style='font-size:19px;margin:34px 0 6px'>Evidence: what happens when a vacant lot gets built on</h2>
+<p class='lede'>Of the 60,361 Cook County parcels classed <b>1-00 &ldquo;Vacant Land&rdquo;</b> in tax year 2023,
+<b>__EV_N__</b> had a building by tax year 2024 (they moved to a residential, apartment or commercial class).
+Their combined assessed value rose from <b>$__EV_AV23__&nbsp;million to $__EV_AV24__&nbsp;million (+__EV_AVPCT__%)</b>,
+and their combined tax bills rose from <b>$__EV_B23__&nbsp;million to $__EV_B24__&nbsp;million</b> &mdash; about
+<b>$__EV_BDIFF__&nbsp;million more billed in a single year</b>, compared with when the same parcels were empty lots.</p>
+<div style='overflow-x:auto'><table><thead><tr><th>Became</th><th class='num'>Parcels</th><th class='num'>Assessed value, 2023</th>
+<th class='num'>Assessed value, 2024</th><th class='num'>Change</th><th class='num'>Tax bills, 2023</th>
+<th class='num'>Tax bills, 2024</th><th class='num'>Change</th></tr></thead><tbody>__EV_ROWS__</tbody></table></div>
+<p class='lede' style='font-size:12px'><b>Method.</b> Parcels are those classed 1-00 in tax year 2023 and in a
+class 2, 3 or 5 building class in tax year 2024. Assessed values are the <b>Board of Review</b> (final) values in
+both years; __EV_AVN__ parcels have one in both years. Tax bills are the billed amounts for tax years 2023 and 2024
+(the 2024 bills were paid in 2025); __EV_BLN__ parcels have a bill on file for both years. The bill change also includes any change in tax rates between the two years, which is
+small next to a roughly tenfold jump in assessed value. Lots that went to an exempt or incentive class are not
+included. Sources: Cook County Assessor; Cook County Treasurer tax bills via Chicago Cityscape.
+<a href='__EV_CSV__' style='color:#5C6FE3'>Download the parcel-level data (CSV)</a>.</p>
 <footer>Built with <a href='__CLE__'>LVTShift</a>, a product of the Center for Land Economics
 (<a href='__CLE__'>landeconomics.org/lvtshift</a>). Assessment ratios and class definitions: Cook County
 Assessor. Levies/rates: Cook County Clerk <a href='__CLERK__'>Tax Extension &amp; Rates</a> (TY2024 Tax Code
@@ -176,7 +232,7 @@ render();
 </script></body></html>"""
 for k, v in {'__BG__': BG, '__INK__': INK, '__BLUE__': BLUE, '__MUTED__': MUTED, '__GRID__': GRID,
              '__ARTICLE__': ARTICLE, '__CLE__': CLE, '__CLERK__': CLERK,
-             '__RZ20M__': RZ20M, '__RZ25M__': RZ25M}.items():
+             '__RZ20M__': RZ20M, '__RZ25M__': RZ25M, **EV}.items():
     html = html.replace(k, v)
 html = html.replace('__DATA__', json.dumps(DATA))
 Path('cook_vacant_reassessment.html').write_text(html)
