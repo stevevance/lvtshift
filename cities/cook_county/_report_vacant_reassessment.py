@@ -39,9 +39,33 @@ def aggregate(df):
     return top
 
 
+# "Standard lot" card: the median bill on a reassessed vacant lot near Chicago's standard 25x125
+# (3,125 sq ft). Lot area is the parcel polygon area (IL State Plane, sq ft) from the Chicago
+# Cityscape parcel_2025_unioned table, cached by PIN in data/vacant_lot_areas.csv (a14 = pin14 match).
+STD_LO, STD_HI, STD_MIN = 2800, 3450, 20
+pins = pd.read_parquet('data/parcels_vacant_reassessment_pins.parquet')
+pins = pins[pins['PROPERTY_CATEGORY'] == 'Vacant land (reassessed)']
+areas_sf = pd.read_csv('data/vacant_lot_areas.csv', dtype={'pin': str})
+std = pins.merge(areas_sf[['pin', 'a14']], on='pin')
+std = std[std['a14'].between(STD_LO, STD_HI)]
+std['township_name'] = std['township_name'].fillna('(unknown)')
+
+
+def std_lot(d):
+    out = {'n': int(len(d)), 'cur': int(round(float(d['current_tax'].median()))) if len(d) else 0}
+    for s in SCEN:
+        out[f'{s}_new'] = int(round(float((d['current_tax'] + d[f'{s}_change']).median()))) if len(d) else 0
+        out[f'{s}_ch'] = int(round(float(d[f'{s}_change'].median()))) if len(d) else 0
+    return out
+
+
+std_by_area = {str(a).title(): d for a, d in std.groupby('township_name')}
+
 by_area = {'All Cook County': aggregate(gs)}
+by_area['All Cook County']['std'] = std_lot(std)
 for area, d in gs.groupby('township'):
     by_area[str(area).title()] = aggregate(d)
+    by_area[str(area).title()]['std'] = std_lot(std_by_area.get(str(area).title(), std.iloc[0:0]))
 areas = ['All Cook County'] + sorted(a for a in by_area if a != 'All Cook County')
 DATA = {'areas': areas, 'byArea': by_area}
 print(f'{len(areas)-1} townships + All Cook County')
@@ -110,6 +134,7 @@ html = """<!doctype html><html lang='en'><head><meta charset='utf-8'>
  .toggle button.active{background:__INK__;color:#fff}
  .cards{display:flex;gap:14px;margin:18px 0} .sc{flex:1;background:#fff;border:1px solid __GRID__;border-radius:8px;padding:14px}
  .sc h4{margin:0 0 6px;font-size:12px;color:__MUTED__} .sc .big{font-size:26px;font-weight:bold} .sc .sub{font-size:11.5px;color:__MUTED__;margin-top:3px}
+ .stdrow{display:flex;gap:28px;align-items:flex-end;flex-wrap:wrap;margin:6px 0 8px} .stdrow .arrow{font-size:22px;color:__MUTED__;padding-bottom:4px}
  table{border-collapse:collapse;width:100%;font-size:13px;margin-top:6px}
  th,td{padding:7px 9px;border-bottom:1px solid __GRID__} th{color:__MUTED__;font-size:11.5px;text-align:left}
  td.cat{font-weight:bold;width:230px} td.barcell{width:46%}
@@ -148,6 +173,7 @@ land — and leaves the rest of the property tax exactly as it is today.</div>
     <button data-m='rn' class='active'>Revenue-neutral</button><button data-m='rz'>Not revenue-neutral</button></div>
 </div>
 <div class='cards' id='cards'></div>
+<div class='sc' id='stdlot' style='margin:0 0 18px'></div>
 <p class='lede' style='margin:16px 0 0'>Categories below use the assessor's standard property groupings, except
 that the reassessed vacant lots are pulled into their own <b>&ldquo;Vacant land (reassessed)&rdquo;</b> row so it
 matches the parcels actually being reassessed. Every other row is <b>not</b> reassessed: under
@@ -211,6 +237,14 @@ function render(){
     "<div class='sc'><h4>Overall median change</h4><div class='big "+(med>=0?'up':'down')+"'>"+pct(med)+"</div><div class='sub'>"+medSub+"</div></div>"+
     "<div class='sc'><h4>Aggregate net change</h4><div class='big'>"+moneyS(net)+"</div><div class='sub'>"+netSub+"</div></div>"+
     "<div class='sc'><h4>Modeled parcels</h4><div class='big'>"+a.n.toLocaleString()+"</div><div class='sub'>non-exempt, "+sel.value+"</div></div>";
+  const s=a.std, sk=mode+tgt;
+  document.getElementById('stdlot').innerHTML=s.n<__STD_MIN__
+    ?"<h4>A standard 25&times;125 vacant lot</h4><div class='sub'>Too few vacant lots near standard size in "+sel.value+" to report ("+s.n+" between __STD_LO__ and __STD_HI__ sq ft).</div>"
+    :"<h4>A standard 25&times;125 vacant lot (3,125 sq ft)</h4><div class='stdrow'><div><div class='sub'>Bill today</div><div class='big'>"+money(s.cur)+"</div></div>"+
+     "<div class='arrow'>&rarr;</div><div><div class='sub'>Bill at "+tgt+"%</div><div class='big up'>"+money(s[sk+'_new'])+"</div></div>"+
+     "<div><div class='sub'>Change per year</div><div class='big up'>"+moneyS(s[sk+'_ch'])+"</div></div></div>"+
+     "<div class='sub'>Median of "+s.n.toLocaleString()+" reassessed vacant lots between __STD_LO__ and __STD_HI__ sq ft in "+sel.value+
+     " (lot area from parcel maps). Each figure is its own median, so today + change may not add up exactly.</div>";
   const kp=mode+tgt+'_pct', km=mode+tgt+'_medd', kn=mode+tgt+'_net';
   const rows=a.cats.slice().sort((x,y)=>((y[kp]??-999)-(x[kp]??-999)));
   const scale=Math.max(1,...rows.map(r=>Math.abs(r[kp]??0)));
@@ -232,7 +266,8 @@ render();
 </script></body></html>"""
 for k, v in {'__BG__': BG, '__INK__': INK, '__BLUE__': BLUE, '__MUTED__': MUTED, '__GRID__': GRID,
              '__ARTICLE__': ARTICLE, '__CLE__': CLE, '__CLERK__': CLERK,
-             '__RZ20M__': RZ20M, '__RZ25M__': RZ25M, **EV}.items():
+             '__RZ20M__': RZ20M, '__RZ25M__': RZ25M, '__STD_MIN__': str(STD_MIN),
+             '__STD_LO__': f'{STD_LO:,}', '__STD_HI__': f'{STD_HI:,}', **EV}.items():
     html = html.replace(k, v)
 html = html.replace('__DATA__', json.dumps(DATA))
 Path('cook_vacant_reassessment.html').write_text(html)
