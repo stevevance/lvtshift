@@ -50,7 +50,7 @@ land — and leaves the rest of the property tax exactly as it is today.</div>
 <div class='controls'>
   <div><label>Township</label><select id='area'></select></div>
   <div class='toggle'><label>Assess vacant land at</label>
-    <button data-t='20' class='active'>20%</button><button data-t='25'>25% (max)</button></div>
+    <button data-t='20'>20%</button><button data-t='25' class='active'>25% (max)</button></div>
   <div class='toggle'><label>Mode</label>
     <button data-m='rn' class='active'>Revenue-neutral</button><button data-m='rz'>Not revenue-neutral</button></div>
 </div>
@@ -107,7 +107,7 @@ DATA.areas.forEach(a=>{const o=document.createElement('option');o.value=a;o.text
 function money(x){const s=x<0?'-':'';return s+'$'+Math.abs(x).toLocaleString();}
 function moneyS(x){return (x>0?'+':'')+money(x);}
 function pct(x){return x===null?'—':(x>=0?'+':'')+x.toFixed(1)+'%';}
-let tgt='20', mode='rn';
+let tgt='25', mode='rn';
 function render(){
   const a=DATA.byArea[sel.value];
   const rn=mode==='rn';
