@@ -222,7 +222,7 @@ the official ~$19.2B extension; the revenue-neutral distribution is unaffected. 
 <script>
 const DATA = __DATA__;
 const sel=document.getElementById('area');
-DATA.areas.forEach(a=>{const o=document.createElement('option');o.value=a;o.textContent=a+' ('+DATA.byArea[a].n.toLocaleString()+')';sel.appendChild(o);});
+DATA.areas.forEach(a=>{const o=document.createElement('option');o.value=a;o.textContent=a+' ('+DATA.byArea[a].n.toLocaleString()+' taxable parcels)';sel.appendChild(o);});
 function money(x){const s=x<0?'-':'';return s+'$'+Math.abs(x).toLocaleString();}
 function moneyS(x){return (x>0?'+':'')+money(x);}
 function pct(x){return x===null?'—':(x>=0?'+':'')+x.toFixed(1)+'%';}
@@ -236,7 +236,7 @@ function render(){
   document.getElementById('cards').innerHTML=
     "<div class='sc'><h4>Overall median change</h4><div class='big "+(med>=0?'up':'down')+"'>"+pct(med)+"</div><div class='sub'>"+medSub+"</div></div>"+
     "<div class='sc'><h4>Aggregate net change</h4><div class='big'>"+moneyS(net)+"</div><div class='sub'>"+netSub+"</div></div>"+
-    "<div class='sc'><h4>Modeled parcels</h4><div class='big'>"+a.n.toLocaleString()+"</div><div class='sub'>non-exempt, "+sel.value+"</div></div>";
+    "<div class='sc'><h4>Taxable parcels</h4><div class='big'>"+a.n.toLocaleString()+"</div><div class='sub'>exempt parcels not included, "+sel.value+"</div></div>";
   const s=a.std, sk=mode+tgt;
   document.getElementById('stdlot').innerHTML=s.n<__STD_MIN__
     ?"<h4>A standard 25&times;125 vacant lot</h4><div class='sub'>Too few vacant lots near standard size in "+sel.value+" to report ("+s.n+" between __STD_LO__ and __STD_HI__ sq ft).</div>"
